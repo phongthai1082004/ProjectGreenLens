@@ -1,0 +1,45 @@
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace ProjectGreenLens.Models.Entities
+{
+    public class Plant : BaseEntity
+    {
+        [Required, MaxLength(150)]
+        public string scientificName { get; set; } = null!;
+
+        [MaxLength(150)]
+        public string? commonName { get; set; }
+
+        [MaxLength(2000)]
+        public string? description { get; set; }
+
+        [MaxLength(2000)]
+        public string? careInstructions { get; set; }
+
+        // Thêm foreign key cho category
+        public int? plantCategoryId { get; set; }
+
+        [ForeignKey(nameof(plantCategoryId))]
+        public PlantCategory? plantCategory { get; set; }
+
+
+        public bool isIndoor { get; set; }         // Cây trong nhà hay ngoài trời
+
+        [MaxLength(100)]
+        public int wateringFrequency { get; set; }  // "Weekly", "Daily", "Monthly"
+
+        [MaxLength(100)]
+        public int lightRequirement { get; set; }   // "Low", "Medium", "High"
+
+        [MaxLength(100)]
+        public string? soilType { get; set; }           // Loại đất phù hợp
+
+        public decimal? averagePrice { get; set; }      // Giá trung bình
+
+        public ArModel? arModel { get; set; }
+        public List<Photo> photos { get; set; } = new();
+        public List<Guide> guides { get; set; } = new();
+        public List<UserPlant> userPlants { get; set; } = new();
+    }
+}
