@@ -16,8 +16,7 @@ namespace ProjectGreenLens.Models.Entities
         [Required]
         public DateTime updatedAt { get; set; } = DateTime.UtcNow;
 
-        public BaseEntity()
-        {
-        }
+        public bool isDelete { get; set; } = false;
+        public DateTime? deletedAt { get; set; } = null;
     }
 }

@@ -2,6 +2,11 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using ProjectGreenLens.Infrastructure.dbContext;
+using ProjectGreenLens.Infrastructure.Middleware.ErrorHandlingMiddleware;
+using ProjectGreenLens.Repositories.Implementations;
+using ProjectGreenLens.Repositories.Interfaces;
+using ProjectGreenLens.Services.Implementations;
+using ProjectGreenLens.Services.Interfaces;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,32 +26,62 @@ builder.Configuration
     .AddJsonFile("secretsettings.json", optional: true, reloadOnChange: true);
 
 
-var jwtSecretKey = builder.Configuration.GetSection("JwtSettings")["SecretKey"];
-if (string.IsNullOrEmpty(jwtSecretKey))
+
+// Repositoies
+builder.Services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
+
+// Services
+builder.Services.AddScoped(typeof(IBaseService<>), typeof(BaseService<>));
+builder.Services.AddScoped<IJwtService, JwtService>();
+
+
+
+
+// Thêm JWT Authentication
+var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+var key = Encoding.ASCII.GetBytes(jwtSettings["Key"] ?? throw new InvalidOperationException("JWT Key is not configured."));
+var issuer = jwtSettings["Issuer"];
+var audience = jwtSettings["Audience"];
+
+builder.Services.AddAuthentication(options =>
 {
-    throw new InvalidOperationException("JWT Secret Key is not configured properly in the settings.");
-}
-
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.RequireHttpsMetadata = false;
+    options.SaveToken = true;
+    options.TokenValidationParameters = new TokenValidationParameters
     {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
+        ValidateIssuer = true,
+        ValidIssuer = issuer,
 
-            ValidIssuer = "localhost",
-            ValidAudience = "localhost",
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecretKey)),
-            ClockSkew = TimeSpan.Zero
-        };
-    });
+        ValidateAudience = true,
+        ValidAudience = audience,
 
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(key),
 
+        ValidateLifetime = true,
+        ClockSkew = TimeSpan.Zero
+    };
+});
+
+// Authrorization policies can be added here if needed
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+    options.AddPolicy("UserOnly", policy => policy.RequireRole("User"));
+    options.AddPolicy("NurseryOnly", policy => policy.RequireRole("Nursery"));
+});
 
 var app = builder.Build();
+
+
+// Middleware
+app.UseMiddleware<ErrorHandlingMiddleware>();
+app.UseMiddleware<ApiResponseMiddleware>();
 
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication();

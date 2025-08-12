@@ -39,6 +39,12 @@ namespace ProjectGreenLens.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("NOW()");
 
+                    b.Property<DateTime?>("deletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("isDelete")
+                        .HasColumnType("boolean");
+
                     b.Property<Guid>("uniqueGuid")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
@@ -75,9 +81,15 @@ namespace ProjectGreenLens.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("NOW()");
 
+                    b.Property<DateTime?>("deletedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("fileFormat")
                         .HasMaxLength(10)
                         .HasColumnType("character varying(10)");
+
+                    b.Property<bool>("isDelete")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("modelUrl")
                         .IsRequired()
@@ -127,8 +139,14 @@ namespace ProjectGreenLens.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("NOW()");
 
+                    b.Property<DateTime?>("deletedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<int?>("effectiveness")
                         .HasColumnType("integer");
+
+                    b.Property<bool>("isDelete")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("notes")
                         .HasMaxLength(500)
@@ -184,6 +202,9 @@ namespace ProjectGreenLens.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("NOW()");
 
+                    b.Property<DateTime?>("deletedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<int>("frequency")
                         .HasMaxLength(50)
                         .HasColumnType("integer");
@@ -192,6 +213,9 @@ namespace ProjectGreenLens.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
                         .HasDefaultValue(false);
+
+                    b.Property<bool>("isDelete")
+                        .HasColumnType("boolean");
 
                     b.Property<DateTime?>("nextScheduledDate")
                         .HasColumnType("timestamp with time zone");
@@ -249,6 +273,12 @@ namespace ProjectGreenLens.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("NOW()");
 
+                    b.Property<DateTime?>("deletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("isDelete")
+                        .HasColumnType("boolean");
+
                     b.Property<int>("plantId")
                         .HasColumnType("integer");
 
@@ -294,6 +324,12 @@ namespace ProjectGreenLens.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("NOW()");
+
+                    b.Property<DateTime?>("deletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("isDelete")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("metadata")
                         .HasColumnType("text");
@@ -342,9 +378,15 @@ namespace ProjectGreenLens.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("NOW()");
 
+                    b.Property<DateTime?>("deletedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("description")
                         .HasMaxLength(1000)
                         .HasColumnType("character varying(1000)");
+
+                    b.Property<bool>("isDelete")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("nurseryName")
                         .IsRequired()
@@ -396,9 +438,15 @@ namespace ProjectGreenLens.Migrations
                         .HasMaxLength(10)
                         .HasColumnType("character varying(10)");
 
+                    b.Property<DateTime?>("deletedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("description")
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
+
+                    b.Property<bool>("isDelete")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("paymentMethod")
                         .IsRequired()
@@ -457,10 +505,16 @@ namespace ProjectGreenLens.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("NOW()");
 
+                    b.Property<DateTime?>("deletedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("description")
                         .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
+
+                    b.Property<bool>("isDelete")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("name")
                         .IsRequired()
@@ -491,56 +545,62 @@ namespace ProjectGreenLens.Migrations
                         new
                         {
                             id = 1,
-                            createdAt = new DateTime(2025, 8, 8, 17, 57, 22, 840, DateTimeKind.Utc).AddTicks(3413),
+                            createdAt = new DateTime(2025, 8, 8, 20, 46, 21, 262, DateTimeKind.Utc).AddTicks(4015),
                             description = "Permission to create plants",
+                            isDelete = false,
                             name = "createPlant",
                             uniqueGuid = new Guid("00000000-0000-0000-0000-000000000000"),
-                            updatedAt = new DateTime(2025, 8, 8, 17, 57, 22, 840, DateTimeKind.Utc).AddTicks(3414)
+                            updatedAt = new DateTime(2025, 8, 8, 20, 46, 21, 262, DateTimeKind.Utc).AddTicks(4016)
                         },
                         new
                         {
                             id = 2,
-                            createdAt = new DateTime(2025, 8, 8, 17, 57, 22, 840, DateTimeKind.Utc).AddTicks(3925),
+                            createdAt = new DateTime(2025, 8, 8, 20, 46, 21, 262, DateTimeKind.Utc).AddTicks(4515),
                             description = "Permission to edit plants",
+                            isDelete = false,
                             name = "editPlant",
                             uniqueGuid = new Guid("00000000-0000-0000-0000-000000000000"),
-                            updatedAt = new DateTime(2025, 8, 8, 17, 57, 22, 840, DateTimeKind.Utc).AddTicks(3926)
+                            updatedAt = new DateTime(2025, 8, 8, 20, 46, 21, 262, DateTimeKind.Utc).AddTicks(4516)
                         },
                         new
                         {
                             id = 3,
-                            createdAt = new DateTime(2025, 8, 8, 17, 57, 22, 840, DateTimeKind.Utc).AddTicks(3927),
+                            createdAt = new DateTime(2025, 8, 8, 20, 46, 21, 262, DateTimeKind.Utc).AddTicks(4517),
                             description = "Permission to delete plants",
+                            isDelete = false,
                             name = "deletePlant",
                             uniqueGuid = new Guid("00000000-0000-0000-0000-000000000000"),
-                            updatedAt = new DateTime(2025, 8, 8, 17, 57, 22, 840, DateTimeKind.Utc).AddTicks(3927)
+                            updatedAt = new DateTime(2025, 8, 8, 20, 46, 21, 262, DateTimeKind.Utc).AddTicks(4517)
                         },
                         new
                         {
                             id = 4,
-                            createdAt = new DateTime(2025, 8, 8, 17, 57, 22, 840, DateTimeKind.Utc).AddTicks(3928),
+                            createdAt = new DateTime(2025, 8, 8, 20, 46, 21, 262, DateTimeKind.Utc).AddTicks(4518),
                             description = "Permission to view orders/payments",
+                            isDelete = false,
                             name = "viewOrders",
                             uniqueGuid = new Guid("00000000-0000-0000-0000-000000000000"),
-                            updatedAt = new DateTime(2025, 8, 8, 17, 57, 22, 840, DateTimeKind.Utc).AddTicks(3929)
+                            updatedAt = new DateTime(2025, 8, 8, 20, 46, 21, 262, DateTimeKind.Utc).AddTicks(4519)
                         },
                         new
                         {
                             id = 5,
-                            createdAt = new DateTime(2025, 8, 8, 17, 57, 22, 840, DateTimeKind.Utc).AddTicks(3929),
+                            createdAt = new DateTime(2025, 8, 8, 20, 46, 21, 262, DateTimeKind.Utc).AddTicks(4519),
                             description = "Permission to manage users",
+                            isDelete = false,
                             name = "manageUsers",
                             uniqueGuid = new Guid("00000000-0000-0000-0000-000000000000"),
-                            updatedAt = new DateTime(2025, 8, 8, 17, 57, 22, 840, DateTimeKind.Utc).AddTicks(3930)
+                            updatedAt = new DateTime(2025, 8, 8, 20, 46, 21, 262, DateTimeKind.Utc).AddTicks(4520)
                         },
                         new
                         {
                             id = 6,
-                            createdAt = new DateTime(2025, 8, 8, 17, 57, 22, 840, DateTimeKind.Utc).AddTicks(3931),
+                            createdAt = new DateTime(2025, 8, 8, 20, 46, 21, 262, DateTimeKind.Utc).AddTicks(4521),
                             description = "Permission to send messages",
+                            isDelete = false,
                             name = "sendMessages",
                             uniqueGuid = new Guid("00000000-0000-0000-0000-000000000000"),
-                            updatedAt = new DateTime(2025, 8, 8, 17, 57, 22, 840, DateTimeKind.Utc).AddTicks(3931)
+                            updatedAt = new DateTime(2025, 8, 8, 20, 46, 21, 262, DateTimeKind.Utc).AddTicks(4521)
                         });
                 });
 
@@ -560,6 +620,12 @@ namespace ProjectGreenLens.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("NOW()");
+
+                    b.Property<DateTime?>("deletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("isDelete")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("photoUrl")
                         .IsRequired()
@@ -612,9 +678,15 @@ namespace ProjectGreenLens.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("NOW()");
 
+                    b.Property<DateTime?>("deletedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("description")
                         .HasMaxLength(2000)
                         .HasColumnType("character varying(2000)");
+
+                    b.Property<bool>("isDelete")
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("isIndoor")
                         .ValueGeneratedOnAdd()
@@ -678,9 +750,15 @@ namespace ProjectGreenLens.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("NOW()");
 
+                    b.Property<DateTime?>("deletedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("description")
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
+
+                    b.Property<bool>("isDelete")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("name")
                         .IsRequired()
@@ -720,6 +798,12 @@ namespace ProjectGreenLens.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("NOW()");
+
+                    b.Property<DateTime?>("deletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("isDelete")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("name")
                         .IsRequired()
@@ -772,10 +856,16 @@ namespace ProjectGreenLens.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("NOW()");
 
+                    b.Property<DateTime?>("deletedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("description")
                         .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
+
+                    b.Property<bool>("isDelete")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("name")
                         .IsRequired()
@@ -806,29 +896,32 @@ namespace ProjectGreenLens.Migrations
                         new
                         {
                             id = 1,
-                            createdAt = new DateTime(2025, 8, 8, 17, 57, 22, 839, DateTimeKind.Utc).AddTicks(7581),
+                            createdAt = new DateTime(2025, 8, 8, 20, 46, 21, 261, DateTimeKind.Utc).AddTicks(8046),
                             description = "Administrator with full permissions",
+                            isDelete = false,
                             name = "admin",
                             uniqueGuid = new Guid("00000000-0000-0000-0000-000000000000"),
-                            updatedAt = new DateTime(2025, 8, 8, 17, 57, 22, 839, DateTimeKind.Utc).AddTicks(7583)
+                            updatedAt = new DateTime(2025, 8, 8, 20, 46, 21, 261, DateTimeKind.Utc).AddTicks(8048)
                         },
                         new
                         {
                             id = 2,
-                            createdAt = new DateTime(2025, 8, 8, 17, 57, 22, 839, DateTimeKind.Utc).AddTicks(8314),
+                            createdAt = new DateTime(2025, 8, 8, 20, 46, 21, 261, DateTimeKind.Utc).AddTicks(8779),
                             description = "Regular user with limited permissions",
+                            isDelete = false,
                             name = "user",
                             uniqueGuid = new Guid("00000000-0000-0000-0000-000000000000"),
-                            updatedAt = new DateTime(2025, 8, 8, 17, 57, 22, 839, DateTimeKind.Utc).AddTicks(8314)
+                            updatedAt = new DateTime(2025, 8, 8, 20, 46, 21, 261, DateTimeKind.Utc).AddTicks(8780)
                         },
                         new
                         {
                             id = 3,
-                            createdAt = new DateTime(2025, 8, 8, 17, 57, 22, 839, DateTimeKind.Utc).AddTicks(8316),
+                            createdAt = new DateTime(2025, 8, 8, 20, 46, 21, 261, DateTimeKind.Utc).AddTicks(8782),
                             description = "Nursery staff with specific permissions",
+                            isDelete = false,
                             name = "nursery",
                             uniqueGuid = new Guid("00000000-0000-0000-0000-000000000000"),
-                            updatedAt = new DateTime(2025, 8, 8, 17, 57, 22, 839, DateTimeKind.Utc).AddTicks(8316)
+                            updatedAt = new DateTime(2025, 8, 8, 20, 46, 21, 261, DateTimeKind.Utc).AddTicks(8782)
                         });
                 });
 
@@ -924,10 +1017,16 @@ namespace ProjectGreenLens.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("NOW()");
 
+                    b.Property<DateTime?>("deletedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("email")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
+
+                    b.Property<bool>("isDelete")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("passwordHash")
                         .IsRequired()
@@ -979,6 +1078,12 @@ namespace ProjectGreenLens.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("NOW()");
+
+                    b.Property<DateTime?>("deletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("isDelete")
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("isRead")
                         .ValueGeneratedOnAdd()
@@ -1042,6 +1147,9 @@ namespace ProjectGreenLens.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
+                    b.Property<DateTime?>("deletedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<int>("healthStatus")
                         .ValueGeneratedOnAdd()
                         .HasMaxLength(50)
@@ -1052,6 +1160,9 @@ namespace ProjectGreenLens.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
                         .HasDefaultValue(true);
+
+                    b.Property<bool>("isDelete")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("nickname")
                         .HasMaxLength(100)
@@ -1110,9 +1221,15 @@ namespace ProjectGreenLens.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("NOW()");
 
+                    b.Property<DateTime?>("deletedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("fullName")
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
+
+                    b.Property<bool>("isDelete")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("location")
                         .HasMaxLength(100)

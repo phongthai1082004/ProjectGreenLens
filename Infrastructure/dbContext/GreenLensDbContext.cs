@@ -546,12 +546,21 @@ namespace ProjectGreenLens.Infrastructure.dbContext
                 {
                     entry.Entity.createdAt = DateTime.UtcNow;
                     entry.Entity.updatedAt = DateTime.UtcNow;
+                    entry.Entity.isDelete = false; // Ensure isDelete is false on creation
+                    entry.Entity.deletedAt = null; // Ensure deletedAt is null on creation
                 }
                 else if (entry.State == EntityState.Modified)
                 {
                     entry.Entity.updatedAt = DateTime.UtcNow;
                     // Prevent createdAt from being updated
                     entry.Property(nameof(BaseEntity.createdAt)).IsModified = false;
+                }
+                else if (entry.State == EntityState.Deleted)
+                {
+                    // Set deletedAt when an entity is marked as deleted
+                    entry.Entity.deletedAt = DateTime.UtcNow;
+                    entry.Entity.isDelete = true; // Mark as deleted
+                    entry.State = EntityState.Modified; // Change state to Modified to update deletedAt and isDelete
                 }
             }
         }

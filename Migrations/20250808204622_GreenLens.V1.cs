@@ -24,7 +24,9 @@ namespace ProjectGreenLens.Migrations
                     description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
                     uniqueGuid = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
                     createdAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()"),
-                    updatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()")
+                    updatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()"),
+                    isDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    deletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -41,7 +43,9 @@ namespace ProjectGreenLens.Migrations
                     description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
                     uniqueGuid = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
                     createdAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()"),
-                    updatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()")
+                    updatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()"),
+                    isDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    deletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -60,7 +64,9 @@ namespace ProjectGreenLens.Migrations
                     prevention = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
                     uniqueGuid = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
                     createdAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()"),
-                    updatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()")
+                    updatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()"),
+                    isDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    deletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -77,7 +83,9 @@ namespace ProjectGreenLens.Migrations
                     description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
                     uniqueGuid = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
                     createdAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()"),
-                    updatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()")
+                    updatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()"),
+                    isDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    deletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -102,7 +110,9 @@ namespace ProjectGreenLens.Migrations
                     averagePrice = table.Column<decimal>(type: "numeric(18,2)", nullable: true),
                     uniqueGuid = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
                     createdAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()"),
-                    updatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()")
+                    updatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()"),
+                    isDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    deletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -151,7 +161,9 @@ namespace ProjectGreenLens.Migrations
                     roleId = table.Column<int>(type: "integer", nullable: false),
                     uniqueGuid = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
                     createdAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()"),
-                    updatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()")
+                    updatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()"),
+                    isDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    deletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -175,7 +187,9 @@ namespace ProjectGreenLens.Migrations
                     fileFormat = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: true),
                     uniqueGuid = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
                     createdAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()"),
-                    updatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()")
+                    updatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()"),
+                    isDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    deletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -199,7 +213,9 @@ namespace ProjectGreenLens.Migrations
                     content = table.Column<string>(type: "character varying(5000)", maxLength: 5000, nullable: true),
                     uniqueGuid = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
                     createdAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()"),
-                    updatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()")
+                    updatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()"),
+                    isDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    deletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -223,7 +239,9 @@ namespace ProjectGreenLens.Migrations
                     caption = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: true),
                     uniqueGuid = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
                     createdAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()"),
-                    updatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()")
+                    updatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()"),
+                    isDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    deletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -247,7 +265,9 @@ namespace ProjectGreenLens.Migrations
                     metadata = table.Column<string>(type: "text", nullable: true),
                     uniqueGuid = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
                     createdAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()"),
-                    updatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()")
+                    updatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()"),
+                    isDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    deletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -273,7 +293,9 @@ namespace ProjectGreenLens.Migrations
                     description = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
                     uniqueGuid = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
                     createdAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()"),
-                    updatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()")
+                    updatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()"),
+                    isDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    deletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -302,7 +324,9 @@ namespace ProjectGreenLens.Migrations
                     processedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     uniqueGuid = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
                     createdAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()"),
-                    updatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()")
+                    updatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()"),
+                    isDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    deletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -328,7 +352,9 @@ namespace ProjectGreenLens.Migrations
                     isRead = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
                     uniqueGuid = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
                     createdAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()"),
-                    updatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()")
+                    updatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()"),
+                    isDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    deletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -364,7 +390,9 @@ namespace ProjectGreenLens.Migrations
                     isActive = table.Column<bool>(type: "boolean", nullable: false, defaultValue: true),
                     uniqueGuid = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
                     createdAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()"),
-                    updatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()")
+                    updatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()"),
+                    isDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    deletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -396,7 +424,9 @@ namespace ProjectGreenLens.Migrations
                     location = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
                     uniqueGuid = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
                     createdAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()"),
-                    updatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()")
+                    updatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()"),
+                    isDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    deletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -419,7 +449,9 @@ namespace ProjectGreenLens.Migrations
                     adviceText = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: true),
                     uniqueGuid = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
                     createdAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()"),
-                    updatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()")
+                    updatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()"),
+                    isDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    deletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -447,7 +479,9 @@ namespace ProjectGreenLens.Migrations
                     effectiveness = table.Column<int>(type: "integer", nullable: true),
                     uniqueGuid = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
                     createdAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()"),
-                    updatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()")
+                    updatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()"),
+                    isDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    deletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -476,7 +510,9 @@ namespace ProjectGreenLens.Migrations
                     completedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     uniqueGuid = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
                     createdAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()"),
-                    updatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()")
+                    updatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()"),
+                    isDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    deletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -491,25 +527,25 @@ namespace ProjectGreenLens.Migrations
 
             migrationBuilder.InsertData(
                 table: "permissions",
-                columns: new[] { "id", "createdAt", "description", "name", "updatedAt" },
+                columns: new[] { "id", "createdAt", "deletedAt", "description", "isDelete", "name", "updatedAt" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2025, 8, 8, 17, 57, 22, 840, DateTimeKind.Utc).AddTicks(3413), "Permission to create plants", "createPlant", new DateTime(2025, 8, 8, 17, 57, 22, 840, DateTimeKind.Utc).AddTicks(3414) },
-                    { 2, new DateTime(2025, 8, 8, 17, 57, 22, 840, DateTimeKind.Utc).AddTicks(3925), "Permission to edit plants", "editPlant", new DateTime(2025, 8, 8, 17, 57, 22, 840, DateTimeKind.Utc).AddTicks(3926) },
-                    { 3, new DateTime(2025, 8, 8, 17, 57, 22, 840, DateTimeKind.Utc).AddTicks(3927), "Permission to delete plants", "deletePlant", new DateTime(2025, 8, 8, 17, 57, 22, 840, DateTimeKind.Utc).AddTicks(3927) },
-                    { 4, new DateTime(2025, 8, 8, 17, 57, 22, 840, DateTimeKind.Utc).AddTicks(3928), "Permission to view orders/payments", "viewOrders", new DateTime(2025, 8, 8, 17, 57, 22, 840, DateTimeKind.Utc).AddTicks(3929) },
-                    { 5, new DateTime(2025, 8, 8, 17, 57, 22, 840, DateTimeKind.Utc).AddTicks(3929), "Permission to manage users", "manageUsers", new DateTime(2025, 8, 8, 17, 57, 22, 840, DateTimeKind.Utc).AddTicks(3930) },
-                    { 6, new DateTime(2025, 8, 8, 17, 57, 22, 840, DateTimeKind.Utc).AddTicks(3931), "Permission to send messages", "sendMessages", new DateTime(2025, 8, 8, 17, 57, 22, 840, DateTimeKind.Utc).AddTicks(3931) }
+                    { 1, new DateTime(2025, 8, 8, 20, 46, 21, 262, DateTimeKind.Utc).AddTicks(4015), null, "Permission to create plants", false, "createPlant", new DateTime(2025, 8, 8, 20, 46, 21, 262, DateTimeKind.Utc).AddTicks(4016) },
+                    { 2, new DateTime(2025, 8, 8, 20, 46, 21, 262, DateTimeKind.Utc).AddTicks(4515), null, "Permission to edit plants", false, "editPlant", new DateTime(2025, 8, 8, 20, 46, 21, 262, DateTimeKind.Utc).AddTicks(4516) },
+                    { 3, new DateTime(2025, 8, 8, 20, 46, 21, 262, DateTimeKind.Utc).AddTicks(4517), null, "Permission to delete plants", false, "deletePlant", new DateTime(2025, 8, 8, 20, 46, 21, 262, DateTimeKind.Utc).AddTicks(4517) },
+                    { 4, new DateTime(2025, 8, 8, 20, 46, 21, 262, DateTimeKind.Utc).AddTicks(4518), null, "Permission to view orders/payments", false, "viewOrders", new DateTime(2025, 8, 8, 20, 46, 21, 262, DateTimeKind.Utc).AddTicks(4519) },
+                    { 5, new DateTime(2025, 8, 8, 20, 46, 21, 262, DateTimeKind.Utc).AddTicks(4519), null, "Permission to manage users", false, "manageUsers", new DateTime(2025, 8, 8, 20, 46, 21, 262, DateTimeKind.Utc).AddTicks(4520) },
+                    { 6, new DateTime(2025, 8, 8, 20, 46, 21, 262, DateTimeKind.Utc).AddTicks(4521), null, "Permission to send messages", false, "sendMessages", new DateTime(2025, 8, 8, 20, 46, 21, 262, DateTimeKind.Utc).AddTicks(4521) }
                 });
 
             migrationBuilder.InsertData(
                 table: "roles",
-                columns: new[] { "id", "createdAt", "description", "name", "updatedAt" },
+                columns: new[] { "id", "createdAt", "deletedAt", "description", "isDelete", "name", "updatedAt" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2025, 8, 8, 17, 57, 22, 839, DateTimeKind.Utc).AddTicks(7581), "Administrator with full permissions", "admin", new DateTime(2025, 8, 8, 17, 57, 22, 839, DateTimeKind.Utc).AddTicks(7583) },
-                    { 2, new DateTime(2025, 8, 8, 17, 57, 22, 839, DateTimeKind.Utc).AddTicks(8314), "Regular user with limited permissions", "user", new DateTime(2025, 8, 8, 17, 57, 22, 839, DateTimeKind.Utc).AddTicks(8314) },
-                    { 3, new DateTime(2025, 8, 8, 17, 57, 22, 839, DateTimeKind.Utc).AddTicks(8316), "Nursery staff with specific permissions", "nursery", new DateTime(2025, 8, 8, 17, 57, 22, 839, DateTimeKind.Utc).AddTicks(8316) }
+                    { 1, new DateTime(2025, 8, 8, 20, 46, 21, 261, DateTimeKind.Utc).AddTicks(8046), null, "Administrator with full permissions", false, "admin", new DateTime(2025, 8, 8, 20, 46, 21, 261, DateTimeKind.Utc).AddTicks(8048) },
+                    { 2, new DateTime(2025, 8, 8, 20, 46, 21, 261, DateTimeKind.Utc).AddTicks(8779), null, "Regular user with limited permissions", false, "user", new DateTime(2025, 8, 8, 20, 46, 21, 261, DateTimeKind.Utc).AddTicks(8780) },
+                    { 3, new DateTime(2025, 8, 8, 20, 46, 21, 261, DateTimeKind.Utc).AddTicks(8782), null, "Nursery staff with specific permissions", false, "nursery", new DateTime(2025, 8, 8, 20, 46, 21, 261, DateTimeKind.Utc).AddTicks(8782) }
                 });
 
             migrationBuilder.InsertData(
