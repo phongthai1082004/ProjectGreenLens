@@ -17,7 +17,7 @@ namespace ProjectGreenLens.Services.Implementations
     public class AuthService : IAuthService
     {
         private readonly IUserRepository _userRepository;
-        private readonly IBaseRepository<UserToken> _tokenRepository;
+        private readonly IUserTokenRepository _tokenRepository;
         private readonly IBaseRepository<Role> _roleRepository;
         private readonly IEmailService _emailService;
         private readonly IMapper _mapper;
@@ -26,7 +26,7 @@ namespace ProjectGreenLens.Services.Implementations
 
         public AuthService(
             IUserRepository userRepository,
-            IBaseRepository<UserToken> tokenRepository,
+            IUserTokenRepository tokenRepository,
             IBaseRepository<Role> roleRepository,
             IEmailService emailService,
             IMapper mapper,
@@ -306,26 +306,48 @@ namespace ProjectGreenLens.Services.Implementations
             {
                 _logger.LogInformation("Attempting to logout user with ID: {UserId}", userId);
 
-                // Find and revoke the refresh token
-                var tokenEntities = await _tokenRepository.GetAllAsync();
-                var tokenEntity = tokenEntities.FirstOrDefault(t =>
-                    t.token == dto.refreshToken &&
-                    t.userId == userId &&
-                    t.type == UserToken.TokenType.RefreshToken &&
-                    !t.isRevoked);
-
-                if (tokenEntity != null)
+                // Validation
+                if (string.IsNullOrWhiteSpace(dto?.refreshToken))
                 {
-                    tokenEntity.isRevoked = true;
-                    await _tokenRepository.UpdateAsync(tokenEntity);
+                    _logger.LogWarning("Empty refresh token for user ID: {UserId}", userId);
+                    throw new ArgumentException("Refresh token is required");
                 }
 
+                if (userId <= 0)
+                {
+                    _logger.LogWarning("Invalid user ID: {UserId}", userId);
+                    throw new ArgumentException("Invalid user ID");
+                }
+
+                // Sử dụng method đã có sẵn trong UserTokenRepository
+                var tokenEntity = await _tokenRepository.GetActiveRefreshTokenAsync(dto.refreshToken, userId);
+
+                if (tokenEntity == null)
+                {
+                    _logger.LogWarning("Active refresh token not found for user ID: {UserId}", userId);
+                    throw new UnauthorizedAccessException("Invalid or expired refresh token");
+                }
+
+                // Revoke token
+                tokenEntity.isRevoked = true;
+                tokenEntity.updatedAt = DateTime.UtcNow; // BaseEntity có updatedAt
+
+                await _tokenRepository.UpdateAsync(tokenEntity);
+
                 _logger.LogInformation("User logged out successfully with ID: {UserId}", userId);
+            }
+            catch (ArgumentException)
+            {
+                throw; // Re-throw validation errors
+            }
+            catch (UnauthorizedAccessException)
+            {
+                throw; // Re-throw auth errors
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while logging out user with ID: {UserId}", userId);
-                throw;
+                throw new InvalidOperationException("Logout failed due to system error", ex);
             }
         }
 

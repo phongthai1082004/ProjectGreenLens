@@ -40,6 +40,7 @@ builder.Services.AddDbContext<GreenLensDbContext>(options =>
 builder.Services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
 builder.Services.AddScoped(typeof(IBaseService<,,,>), typeof(BaseService<,,,>));
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserTokenRepository, UserTokenRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 
