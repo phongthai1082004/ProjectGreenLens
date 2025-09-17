@@ -2,9 +2,9 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using ProjectGreenLens.Infrastructure.dbContext;
 
 #nullable disable
@@ -12,7 +12,7 @@ using ProjectGreenLens.Infrastructure.dbContext;
 namespace ProjectGreenLens.Migrations
 {
     [DbContext(typeof(GreenLensDbContext))]
-    [Migration("20250808204622_GreenLens.V1")]
+    [Migration("20250916190354_GreenLens.V1")]
     partial class GreenLensV1
     {
         /// <inheritdoc />
@@ -20,160 +20,177 @@ namespace ProjectGreenLens.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.8")
-                .HasAnnotation("Relational:MaxIdentifierLength", 63);
+                .HasAnnotation("ProductVersion", "9.0.9")
+                .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("ProjectGreenLens.Models.Entities.AIAdvicesLogs", b =>
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
-                    b.Property<string>("adviceText")
+                    b.Property<string>("content")
+                        .IsRequired()
                         .HasMaxLength(2000)
-                        .HasColumnType("character varying(2000)");
+                        .HasColumnType("varchar(2000)");
 
                     b.Property<DateTime>("createdAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW()");
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<DateTime?>("deletedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("isDelete")
-                        .HasColumnType("boolean");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("role")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)");
 
                     b.Property<Guid>("uniqueGuid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("gen_random_uuid()");
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
 
                     b.Property<DateTime>("updatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW()");
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
-                    b.Property<int>("userPlantId")
-                        .HasColumnType("integer");
+                    b.Property<int>("userId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("userPlantId")
+                        .HasColumnType("int");
 
                     b.HasKey("id");
 
                     b.HasIndex("createdAt")
-                        .HasDatabaseName("IX_aiAdvicesLogs_CreatedAt");
+                        .HasDatabaseName("IX_AIAdvicesLogs_CreatedAt");
+
+                    b.HasIndex("userId");
 
                     b.HasIndex("userPlantId");
 
-                    b.ToTable("aiAdvicesLogs");
+                    b.ToTable("AIAdvicesLogs");
                 });
 
             modelBuilder.Entity("ProjectGreenLens.Models.Entities.ArModel", b =>
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
                     b.Property<DateTime>("createdAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW()");
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<DateTime?>("deletedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("fileFormat")
                         .HasMaxLength(10)
-                        .HasColumnType("character varying(10)");
+                        .HasColumnType("varchar(10)");
 
                     b.Property<bool>("isDelete")
-                        .HasColumnType("boolean");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("modelUrl")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("plantId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<Guid>("uniqueGuid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("gen_random_uuid()");
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
 
                     b.Property<DateTime>("updatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW()");
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.HasKey("id");
 
                     b.HasIndex("createdAt")
-                        .HasDatabaseName("IX_arModels_CreatedAt");
+                        .HasDatabaseName("IX_ArModels_CreatedAt");
 
                     b.HasIndex("plantId")
                         .IsUnique();
 
-                    b.ToTable("arModels");
+                    b.ToTable("ArModels");
                 });
 
             modelBuilder.Entity("ProjectGreenLens.Models.Entities.CareHistory", b =>
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
                     b.Property<DateTime>("careDate")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("careType")
                         .HasMaxLength(50)
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("createdAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW()");
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<DateTime?>("deletedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("effectiveness")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<bool>("isDelete")
-                        .HasColumnType("boolean");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("notes")
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("photoUrl")
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("quantity")
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid>("uniqueGuid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("gen_random_uuid()");
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
 
                     b.Property<DateTime>("updatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW()");
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<int>("userPlantId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("id");
 
@@ -181,429 +198,431 @@ namespace ProjectGreenLens.Migrations
                         .HasDatabaseName("IX_CareHistory_CareDate");
 
                     b.HasIndex("createdAt")
-                        .HasDatabaseName("IX_careHistories_CreatedAt");
+                        .HasDatabaseName("IX_CareHistories_CreatedAt");
 
-                    b.HasIndex("userPlantId", "careType", "careDate")
-                        .HasDatabaseName("IX_CareHistory_Query");
+                    b.HasIndex("userPlantId");
 
-                    b.ToTable("careHistories");
+                    b.ToTable("CareHistories");
                 });
 
             modelBuilder.Entity("ProjectGreenLens.Models.Entities.CaresSchedules", b =>
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
                     b.Property<DateTime?>("completedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime>("createdAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW()");
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<DateTime?>("deletedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("frequency")
                         .HasMaxLength(50)
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<bool>("isCompleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false);
+                        .HasColumnType("bit");
 
                     b.Property<bool>("isDelete")
-                        .HasColumnType("boolean");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<DateTime?>("nextScheduledDate")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("notes")
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<DateTime>("scheduleTime")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("taskName")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid>("uniqueGuid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("gen_random_uuid()");
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
 
                     b.Property<DateTime>("updatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW()");
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<int>("userPlantId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("id");
 
                     b.HasIndex("createdAt")
-                        .HasDatabaseName("IX_caresSchedules_CreatedAt");
+                        .HasDatabaseName("IX_CareSchedules_CreatedAt");
 
-                    b.HasIndex("userPlantId", "scheduleTime", "isCompleted")
-                        .HasDatabaseName("IX_CaresSchedules_Query");
+                    b.HasIndex("userPlantId");
 
-                    b.ToTable("caresSchedules");
+                    b.ToTable("CareSchedules");
                 });
 
             modelBuilder.Entity("ProjectGreenLens.Models.Entities.Guide", b =>
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
                     b.Property<string>("content")
                         .HasMaxLength(5000)
-                        .HasColumnType("character varying(5000)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("createdAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW()");
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<DateTime?>("deletedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("isDelete")
-                        .HasColumnType("boolean");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<int>("plantId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<string>("title")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<Guid>("uniqueGuid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("gen_random_uuid()");
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
 
                     b.Property<DateTime>("updatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW()");
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.HasKey("id");
 
                     b.HasIndex("createdAt")
-                        .HasDatabaseName("IX_guides_CreatedAt");
+                        .HasDatabaseName("IX_Guides_CreatedAt");
 
                     b.HasIndex("plantId");
 
-                    b.ToTable("guides");
+                    b.ToTable("Guides");
                 });
 
             modelBuilder.Entity("ProjectGreenLens.Models.Entities.LogEntry", b =>
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
                     b.Property<string>("action")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("createdAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW()");
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<DateTime?>("deletedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("isDelete")
-                        .HasColumnType("boolean");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("metadata")
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("uniqueGuid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("gen_random_uuid()");
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
 
                     b.Property<DateTime>("updatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW()");
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<int>("userId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("id");
 
                     b.HasIndex("createdAt")
-                        .HasDatabaseName("IX_logEntries_CreatedAt");
+                        .HasDatabaseName("IX_LogEntries_CreatedAt");
 
                     b.HasIndex("userId", "createdAt")
                         .HasDatabaseName("IX_LogEntry_UserCreated");
 
-                    b.ToTable("logEntries");
+                    b.ToTable("LogEntries");
                 });
 
             modelBuilder.Entity("ProjectGreenLens.Models.Entities.NurseryProfile", b =>
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
                     b.Property<string>("address")
                         .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("contactNumber")
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<DateTime>("createdAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW()");
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<DateTime?>("deletedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("description")
                         .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<bool>("isDelete")
-                        .HasColumnType("boolean");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("nurseryName")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid>("uniqueGuid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("gen_random_uuid()");
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
 
                     b.Property<DateTime>("updatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW()");
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<int>("userId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("id");
 
                     b.HasIndex("createdAt")
-                        .HasDatabaseName("IX_nurseryProfiles_CreatedAt");
+                        .HasDatabaseName("IX_NurseryProfiles_CreatedAt");
 
                     b.HasIndex("userId")
                         .IsUnique();
 
-                    b.ToTable("nurseryProfiles");
+                    b.ToTable("NurseryProfiles");
                 });
 
             modelBuilder.Entity("ProjectGreenLens.Models.Entities.Payment", b =>
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
                     b.Property<decimal>("amount")
-                        .HasColumnType("numeric");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("createdAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW()");
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<string>("currency")
                         .IsRequired()
                         .HasMaxLength(10)
-                        .HasColumnType("character varying(10)");
+                        .HasColumnType("varchar(10)");
 
                     b.Property<DateTime?>("deletedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("description")
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<bool>("isDelete")
-                        .HasColumnType("boolean");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("paymentMethod")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<DateTime?>("processedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("status")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("transactionId")
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid>("uniqueGuid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("gen_random_uuid()");
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
 
                     b.Property<DateTime>("updatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW()");
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<int>("userId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("id");
 
                     b.HasIndex("createdAt")
-                        .HasDatabaseName("IX_payments_CreatedAt");
+                        .HasDatabaseName("IX_Payments_CreatedAt");
 
                     b.HasIndex("userId", "status", "createdAt")
                         .HasDatabaseName("IX_Payment_UserStatusCreated");
 
-                    b.ToTable("payments", t =>
-                        {
-                            t.HasCheckConstraint("CK_Payment_PositiveAmount", "amount > 0");
-                        });
+                    b.ToTable("Payments");
                 });
 
             modelBuilder.Entity("ProjectGreenLens.Models.Entities.Permission", b =>
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
                     b.Property<DateTime>("createdAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW()");
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<DateTime?>("deletedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("description")
                         .IsRequired()
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<bool>("isDelete")
-                        .HasColumnType("boolean");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("name")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<Guid>("uniqueGuid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("gen_random_uuid()");
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
 
                     b.Property<DateTime>("updatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW()");
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.HasKey("id");
 
                     b.HasIndex("createdAt")
-                        .HasDatabaseName("IX_permissions_CreatedAt");
+                        .HasDatabaseName("IX_Permissions_CreatedAt");
 
-                    b.HasIndex("name")
-                        .IsUnique();
-
-                    b.ToTable("permissions");
+                    b.ToTable("Permissions");
 
                     b.HasData(
                         new
                         {
                             id = 1,
-                            createdAt = new DateTime(2025, 8, 8, 20, 46, 21, 262, DateTimeKind.Utc).AddTicks(4015),
+                            createdAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             description = "Permission to create plants",
                             isDelete = false,
                             name = "createPlant",
-                            uniqueGuid = new Guid("00000000-0000-0000-0000-000000000000"),
-                            updatedAt = new DateTime(2025, 8, 8, 20, 46, 21, 262, DateTimeKind.Utc).AddTicks(4016)
+                            uniqueGuid = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
+                            updatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
                         },
                         new
                         {
                             id = 2,
-                            createdAt = new DateTime(2025, 8, 8, 20, 46, 21, 262, DateTimeKind.Utc).AddTicks(4515),
+                            createdAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             description = "Permission to edit plants",
                             isDelete = false,
                             name = "editPlant",
-                            uniqueGuid = new Guid("00000000-0000-0000-0000-000000000000"),
-                            updatedAt = new DateTime(2025, 8, 8, 20, 46, 21, 262, DateTimeKind.Utc).AddTicks(4516)
+                            uniqueGuid = new Guid("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
+                            updatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
                         },
                         new
                         {
                             id = 3,
-                            createdAt = new DateTime(2025, 8, 8, 20, 46, 21, 262, DateTimeKind.Utc).AddTicks(4517),
+                            createdAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             description = "Permission to delete plants",
                             isDelete = false,
                             name = "deletePlant",
-                            uniqueGuid = new Guid("00000000-0000-0000-0000-000000000000"),
-                            updatedAt = new DateTime(2025, 8, 8, 20, 46, 21, 262, DateTimeKind.Utc).AddTicks(4517)
+                            uniqueGuid = new Guid("cccccccc-cccc-cccc-cccc-cccccccccccc"),
+                            updatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
                         },
                         new
                         {
                             id = 4,
-                            createdAt = new DateTime(2025, 8, 8, 20, 46, 21, 262, DateTimeKind.Utc).AddTicks(4518),
+                            createdAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             description = "Permission to view orders/payments",
                             isDelete = false,
                             name = "viewOrders",
-                            uniqueGuid = new Guid("00000000-0000-0000-0000-000000000000"),
-                            updatedAt = new DateTime(2025, 8, 8, 20, 46, 21, 262, DateTimeKind.Utc).AddTicks(4519)
+                            uniqueGuid = new Guid("dddddddd-dddd-dddd-dddd-dddddddddddd"),
+                            updatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
                         },
                         new
                         {
                             id = 5,
-                            createdAt = new DateTime(2025, 8, 8, 20, 46, 21, 262, DateTimeKind.Utc).AddTicks(4519),
+                            createdAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             description = "Permission to manage users",
                             isDelete = false,
                             name = "manageUsers",
-                            uniqueGuid = new Guid("00000000-0000-0000-0000-000000000000"),
-                            updatedAt = new DateTime(2025, 8, 8, 20, 46, 21, 262, DateTimeKind.Utc).AddTicks(4520)
+                            uniqueGuid = new Guid("eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee"),
+                            updatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
                         },
                         new
                         {
                             id = 6,
-                            createdAt = new DateTime(2025, 8, 8, 20, 46, 21, 262, DateTimeKind.Utc).AddTicks(4521),
+                            createdAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             description = "Permission to send messages",
                             isDelete = false,
                             name = "sendMessages",
-                            uniqueGuid = new Guid("00000000-0000-0000-0000-000000000000"),
-                            updatedAt = new DateTime(2025, 8, 8, 20, 46, 21, 262, DateTimeKind.Utc).AddTicks(4521)
+                            uniqueGuid = new Guid("ffffffff-ffff-ffff-ffff-ffffffffffff"),
+                            updatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
                         });
                 });
 
@@ -611,338 +630,334 @@ namespace ProjectGreenLens.Migrations
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
                     b.Property<string>("caption")
                         .HasMaxLength(250)
-                        .HasColumnType("character varying(250)");
+                        .HasColumnType("nvarchar(250)");
 
                     b.Property<DateTime>("createdAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW()");
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<DateTime?>("deletedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("isDelete")
-                        .HasColumnType("boolean");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("photoUrl")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("plantId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<Guid>("uniqueGuid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("gen_random_uuid()");
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
 
                     b.Property<DateTime>("updatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW()");
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.HasKey("id");
 
                     b.HasIndex("createdAt")
-                        .HasDatabaseName("IX_photos_CreatedAt");
+                        .HasDatabaseName("IX_Photos_CreatedAt");
 
                     b.HasIndex("plantId");
 
-                    b.ToTable("photos");
+                    b.ToTable("Photos");
                 });
 
             modelBuilder.Entity("ProjectGreenLens.Models.Entities.Plant", b =>
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
                     b.Property<decimal?>("averagePrice")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("careInstructions")
                         .HasMaxLength(2000)
-                        .HasColumnType("character varying(2000)");
+                        .HasColumnType("nvarchar(2000)");
 
                     b.Property<string>("commonName")
                         .HasMaxLength(150)
-                        .HasColumnType("character varying(150)");
+                        .HasColumnType("nvarchar(150)");
 
                     b.Property<DateTime>("createdAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW()");
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<DateTime?>("deletedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("description")
                         .HasMaxLength(2000)
-                        .HasColumnType("character varying(2000)");
+                        .HasColumnType("nvarchar(2000)");
 
                     b.Property<bool>("isDelete")
-                        .HasColumnType("boolean");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<bool>("isIndoor")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(true);
+                        .HasColumnType("bit");
 
                     b.Property<int>("lightRequirement")
                         .HasMaxLength(100)
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("plantCategoryId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<string>("scientificName")
                         .IsRequired()
                         .HasMaxLength(150)
-                        .HasColumnType("character varying(150)");
+                        .HasColumnType("nvarchar(150)");
 
                     b.Property<string>("soilType")
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid>("uniqueGuid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("gen_random_uuid()");
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
 
                     b.Property<DateTime>("updatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW()");
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<int>("wateringFrequency")
                         .HasMaxLength(100)
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("id");
 
                     b.HasIndex("createdAt")
-                        .HasDatabaseName("IX_plants_CreatedAt");
+                        .HasDatabaseName("IX_Plants_CreatedAt");
 
                     b.HasIndex("plantCategoryId")
                         .HasDatabaseName("IX_Plant_CategoryId");
 
-                    b.HasIndex("scientificName")
-                        .IsUnique();
-
-                    b.ToTable("plants");
+                    b.ToTable("Plants");
                 });
 
             modelBuilder.Entity("ProjectGreenLens.Models.Entities.PlantCategory", b =>
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
                     b.Property<DateTime>("createdAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW()");
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<DateTime?>("deletedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("description")
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<bool>("isDelete")
-                        .HasColumnType("boolean");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid>("uniqueGuid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("gen_random_uuid()");
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
 
                     b.Property<DateTime>("updatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW()");
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.HasKey("id");
 
                     b.HasIndex("createdAt")
-                        .HasDatabaseName("IX_plantCategories_CreatedAt");
+                        .HasDatabaseName("IX_PlantCategories_CreatedAt");
 
-                    b.HasIndex("name")
-                        .IsUnique();
-
-                    b.ToTable("plantCategories");
+                    b.ToTable("PlantCategories");
                 });
 
             modelBuilder.Entity("ProjectGreenLens.Models.Entities.PlantDisease", b =>
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
                     b.Property<DateTime>("createdAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW()");
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<DateTime?>("deletedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("isDelete")
-                        .HasColumnType("boolean");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("prevention")
                         .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<string>("symptoms")
                         .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<string>("treatment")
                         .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<Guid>("uniqueGuid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("gen_random_uuid()");
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
 
                     b.Property<DateTime>("updatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW()");
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.HasKey("id");
 
                     b.HasIndex("createdAt")
-                        .HasDatabaseName("IX_plantDiseases_CreatedAt");
+                        .HasDatabaseName("IX_PlantDiseases_CreatedAt");
 
-                    b.HasIndex("name")
-                        .IsUnique();
-
-                    b.ToTable("plantDiseases");
+                    b.ToTable("PlantDiseases");
                 });
 
             modelBuilder.Entity("ProjectGreenLens.Models.Entities.Role", b =>
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
                     b.Property<DateTime>("createdAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW()");
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<DateTime?>("deletedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("description")
                         .IsRequired()
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<bool>("isDelete")
-                        .HasColumnType("boolean");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("name")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<Guid>("uniqueGuid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("gen_random_uuid()");
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
 
                     b.Property<DateTime>("updatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW()");
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.HasKey("id");
 
                     b.HasIndex("createdAt")
-                        .HasDatabaseName("IX_roles_CreatedAt");
+                        .HasDatabaseName("IX_Roles_CreatedAt");
 
-                    b.HasIndex("name")
-                        .IsUnique();
-
-                    b.ToTable("roles");
+                    b.ToTable("Roles");
 
                     b.HasData(
                         new
                         {
                             id = 1,
-                            createdAt = new DateTime(2025, 8, 8, 20, 46, 21, 261, DateTimeKind.Utc).AddTicks(8046),
+                            createdAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             description = "Administrator with full permissions",
                             isDelete = false,
                             name = "admin",
-                            uniqueGuid = new Guid("00000000-0000-0000-0000-000000000000"),
-                            updatedAt = new DateTime(2025, 8, 8, 20, 46, 21, 261, DateTimeKind.Utc).AddTicks(8048)
+                            uniqueGuid = new Guid("11111111-1111-1111-1111-111111111111"),
+                            updatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
                         },
                         new
                         {
                             id = 2,
-                            createdAt = new DateTime(2025, 8, 8, 20, 46, 21, 261, DateTimeKind.Utc).AddTicks(8779),
+                            createdAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             description = "Regular user with limited permissions",
                             isDelete = false,
                             name = "user",
-                            uniqueGuid = new Guid("00000000-0000-0000-0000-000000000000"),
-                            updatedAt = new DateTime(2025, 8, 8, 20, 46, 21, 261, DateTimeKind.Utc).AddTicks(8780)
+                            uniqueGuid = new Guid("22222222-2222-2222-2222-222222222222"),
+                            updatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
                         },
                         new
                         {
                             id = 3,
-                            createdAt = new DateTime(2025, 8, 8, 20, 46, 21, 261, DateTimeKind.Utc).AddTicks(8782),
+                            createdAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             description = "Nursery staff with specific permissions",
                             isDelete = false,
                             name = "nursery",
-                            uniqueGuid = new Guid("00000000-0000-0000-0000-000000000000"),
-                            updatedAt = new DateTime(2025, 8, 8, 20, 46, 21, 261, DateTimeKind.Utc).AddTicks(8782)
+                            uniqueGuid = new Guid("33333333-3333-3333-3333-333333333333"),
+                            updatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
                         });
                 });
 
             modelBuilder.Entity("ProjectGreenLens.Models.Entities.RolePermission", b =>
                 {
                     b.Property<int>("roleId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(0);
 
                     b.Property<int>("permissionId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.HasKey("roleId", "permissionId");
 
                     b.HasIndex("permissionId");
 
-                    b.ToTable("rolePermissions");
+                    b.ToTable("RolePermissions");
 
                     b.HasData(
                         new
@@ -983,12 +998,12 @@ namespace ProjectGreenLens.Migrations
                         new
                         {
                             roleId = 2,
-                            permissionId = 6
+                            permissionId = 4
                         },
                         new
                         {
                             roleId = 2,
-                            permissionId = 4
+                            permissionId = 6
                         },
                         new
                         {
@@ -1011,264 +1026,322 @@ namespace ProjectGreenLens.Migrations
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
                     b.Property<DateTime>("createdAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW()");
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<DateTime?>("deletedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("email")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<bool>("isDelete")
-                        .HasColumnType("boolean");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("passwordHash")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("roleId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int")
+                        .HasColumnName("roleId");
 
                     b.Property<Guid>("uniqueGuid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("gen_random_uuid()");
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
 
                     b.Property<DateTime>("updatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW()");
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<string>("username")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("id");
 
                     b.HasIndex("createdAt")
-                        .HasDatabaseName("IX_users_CreatedAt");
-
-                    b.HasIndex("email")
-                        .IsUnique();
+                        .HasDatabaseName("IX_Users_CreatedAt");
 
                     b.HasIndex("roleId");
 
-                    b.HasIndex("username")
-                        .IsUnique();
-
-                    b.ToTable("users");
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("ProjectGreenLens.Models.Entities.UserMessage", b =>
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
                     b.Property<DateTime>("createdAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW()");
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<DateTime?>("deletedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("isDelete")
-                        .HasColumnType("boolean");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<bool>("isRead")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false);
+                        .HasColumnType("bit");
 
                     b.Property<string>("messageText")
                         .IsRequired()
                         .HasMaxLength(2000)
-                        .HasColumnType("character varying(2000)");
+                        .HasColumnType("nvarchar(2000)");
 
                     b.Property<int>("receiverId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("senderId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<Guid>("uniqueGuid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("gen_random_uuid()");
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
 
                     b.Property<DateTime>("updatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW()");
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.HasKey("id");
 
                     b.HasIndex("createdAt")
-                        .HasDatabaseName("IX_userMessages_CreatedAt");
+                        .HasDatabaseName("IX_UserMessages_CreatedAt");
 
                     b.HasIndex("senderId");
 
                     b.HasIndex("receiverId", "isRead", "createdAt")
                         .HasDatabaseName("IX_UserMessage_ReceiverReadCreated");
 
-                    b.ToTable("userMessages", t =>
-                        {
-                            t.HasCheckConstraint("CK_UserMessage_DifferentUsers", "\"senderId\" != \"receiverId\"");
-                        });
+                    b.ToTable("UserMessages");
                 });
 
             modelBuilder.Entity("ProjectGreenLens.Models.Entities.UserPlant", b =>
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
                     b.Property<DateTime>("acquiredDate")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime>("createdAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW()");
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<string>("currentLocation")
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<DateTime?>("deletedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("healthStatus")
-                        .ValueGeneratedOnAdd()
                         .HasMaxLength(50)
-                        .HasColumnType("integer")
-                        .HasDefaultValue(1);
+                        .HasColumnType("int");
 
                     b.Property<bool>("isActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(true);
+                        .HasColumnType("bit");
 
                     b.Property<bool>("isDelete")
-                        .HasColumnType("boolean");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("nickname")
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("notes")
                         .HasMaxLength(2000)
-                        .HasColumnType("character varying(2000)");
+                        .HasColumnType("nvarchar(2000)");
 
                     b.Property<int>("plantId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<Guid>("uniqueGuid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("gen_random_uuid()");
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
 
                     b.Property<DateTime>("updatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW()");
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<int>("userId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("id");
 
                     b.HasIndex("createdAt")
-                        .HasDatabaseName("IX_userPlants_CreatedAt");
+                        .HasDatabaseName("IX_UserPlants_CreatedAt");
 
                     b.HasIndex("plantId");
 
-                    b.HasIndex("userId", "plantId", "acquiredDate")
-                        .HasDatabaseName("IX_UserPlant_Unique");
+                    b.HasIndex("userId");
 
-                    b.ToTable("userPlants");
+                    b.ToTable("UserPlants");
                 });
 
             modelBuilder.Entity("ProjectGreenLens.Models.Entities.UserProfile", b =>
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
                     b.Property<string>("avatarUrl")
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("bio")
                         .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<DateTime>("createdAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW()");
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<DateTime?>("deletedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("fullName")
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<bool>("isDelete")
-                        .HasColumnType("boolean");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("location")
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid>("uniqueGuid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("gen_random_uuid()");
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
 
                     b.Property<DateTime>("updatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW()");
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<int>("userId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("id");
 
                     b.HasIndex("createdAt")
-                        .HasDatabaseName("IX_userProfiles_CreatedAt");
+                        .HasDatabaseName("IX_UserProfiles_CreatedAt");
 
                     b.HasIndex("userId")
                         .IsUnique();
 
-                    b.ToTable("userProfiles");
+                    b.ToTable("UserProfiles");
+                });
+
+            modelBuilder.Entity("ProjectGreenLens.Models.Entities.UserToken", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
+
+                    b.Property<DateTime>("createdAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<DateTime?>("deletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("expiresAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("isDelete")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("isRevoked")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("token")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<Guid>("uniqueGuid")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
+
+                    b.Property<DateTime>("updatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<int>("userId")
+                        .HasColumnType("int");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("createdAt")
+                        .HasDatabaseName("IX_UserTokens_CreatedAt");
+
+                    b.HasIndex("userId");
+
+                    b.ToTable("UserTokens");
                 });
 
             modelBuilder.Entity("ProjectGreenLens.Models.Entities.AIAdvicesLogs", b =>
                 {
+                    b.HasOne("ProjectGreenLens.Models.Entities.User", "user")
+                        .WithMany("aiAdvicesLogs")
+                        .HasForeignKey("userId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("ProjectGreenLens.Models.Entities.UserPlant", "userPlant")
                         .WithMany("aiAdvicesLogs")
                         .HasForeignKey("userPlantId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("user");
 
                     b.Navigation("userPlant");
                 });
@@ -1365,8 +1438,7 @@ namespace ProjectGreenLens.Migrations
                 {
                     b.HasOne("ProjectGreenLens.Models.Entities.PlantCategory", "plantCategory")
                         .WithMany("plants")
-                        .HasForeignKey("plantCategoryId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .HasForeignKey("plantCategoryId");
 
                     b.Navigation("plantCategory");
                 });
@@ -1393,9 +1465,9 @@ namespace ProjectGreenLens.Migrations
             modelBuilder.Entity("ProjectGreenLens.Models.Entities.User", b =>
                 {
                     b.HasOne("ProjectGreenLens.Models.Entities.Role", "role")
-                        .WithMany()
+                        .WithMany("users")
                         .HasForeignKey("roleId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("role");
@@ -1450,6 +1522,17 @@ namespace ProjectGreenLens.Migrations
                     b.Navigation("user");
                 });
 
+            modelBuilder.Entity("ProjectGreenLens.Models.Entities.UserToken", b =>
+                {
+                    b.HasOne("ProjectGreenLens.Models.Entities.User", "user")
+                        .WithMany("userTokens")
+                        .HasForeignKey("userId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("user");
+                });
+
             modelBuilder.Entity("ProjectGreenLens.Models.Entities.Permission", b =>
                 {
                     b.Navigation("rolePermissions");
@@ -1474,10 +1557,14 @@ namespace ProjectGreenLens.Migrations
             modelBuilder.Entity("ProjectGreenLens.Models.Entities.Role", b =>
                 {
                     b.Navigation("rolePermissions");
+
+                    b.Navigation("users");
                 });
 
             modelBuilder.Entity("ProjectGreenLens.Models.Entities.User", b =>
                 {
+                    b.Navigation("aiAdvicesLogs");
+
                     b.Navigation("logEntries");
 
                     b.Navigation("nurseryProfile");
@@ -1491,6 +1578,8 @@ namespace ProjectGreenLens.Migrations
                     b.Navigation("userPlants");
 
                     b.Navigation("userProfile");
+
+                    b.Navigation("userTokens");
                 });
 
             modelBuilder.Entity("ProjectGreenLens.Models.Entities.UserPlant", b =>

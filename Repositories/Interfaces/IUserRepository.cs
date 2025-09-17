@@ -2,9 +2,9 @@
 
 namespace ProjectGreenLens.Repositories.Interfaces
 {
-    public interface IUserRepository
+    public interface IUserRepository : IBaseRepository<User>
     {
-        Task<User?> GetByUsernameAsync(string username);
         Task<User?> GetByEmailAsync(string email);
+        Task<UserToken?> GetTokenByValueAsync(string token);
     }
 }

@@ -5,22 +5,23 @@ using ProjectGreenLens.Repositories.Interfaces;
 
 namespace ProjectGreenLens.Repositories.Implementations
 {
-    public class UserRepository : IUserRepository
+    public class UserRepository : BaseRepository<User>, IUserRepository
     {
-        private readonly GreenLensDbContext _context;
-
-        public UserRepository(GreenLensDbContext context)
+        public UserRepository(GreenLensDbContext context) : base(context)
         {
-            _context = context;
         }
+
         public async Task<User?> GetByEmailAsync(string email)
         {
-            return await _context.users.Include(u => u.role).FirstOrDefaultAsync(u => u.email == email);
+            return await _context.Set<User>()
+                .Include(u => u.role)
+                .FirstOrDefaultAsync(u => u.email == email);
         }
 
-        public async Task<User?> GetByUsernameAsync(string username)
+        public async Task<UserToken?> GetTokenByValueAsync(string token)
         {
-            return await _context.users.Include(u => u.role).FirstOrDefaultAsync(u => u.username == username);
+            return await _context.Set<UserToken>()
+                .FirstOrDefaultAsync(t => t.token == token);
         }
     }
 }

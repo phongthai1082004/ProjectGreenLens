@@ -8,36 +8,47 @@ namespace ProjectGreenLens.Repositories.Implementations
     public class BaseRepository<T> : IBaseRepository<T> where T : BaseEntity, new()
     {
         protected readonly GreenLensDbContext _context;
+
         public BaseRepository(GreenLensDbContext context)
         {
             _context = context;
         }
-        public async Task<IEnumerable<T>> getAllAsync()
+
+        public async Task<IEnumerable<T>> GetAllAsync()
         {
             return await _context.Set<T>().Where(e => !e.isDelete).ToListAsync();
         }
-        public async Task<T> createAsync(T entity)
+
+        public async Task<T> CreateAsync(T entity)
         {
             entity.uniqueGuid = Guid.NewGuid();
+            entity.createdAt = DateTime.UtcNow;
             await _context.Set<T>().AddAsync(entity);
             await _context.SaveChangesAsync();
             return entity;
         }
-        public async Task updateAsync(T entity)
+
+        public async Task UpdateAsync(T entity)
         {
             entity.updatedAt = DateTime.UtcNow;
-            _context.Set<T>().Update(entity);
+            if (_context.Entry(entity).State == EntityState.Detached)
+            {
+                _context.Attach(entity);
+            }
+            _context.Entry(entity).State = EntityState.Modified;
             await _context.SaveChangesAsync();
         }
-        public async Task<T?> getByIdAsync(int id)
+
+        public async Task<T?> GetByIdAsync(int id)
         {
             return await _context.Set<T>().FirstOrDefaultAsync(e => e.id == id && !e.isDelete);
         }
-        public async Task deleteAsync(T entity)
+
+        public async Task DeleteAsync(T entity)
         {
             entity.isDelete = true;
             entity.deletedAt = DateTime.UtcNow;
-            await updateAsync(entity);
+            await UpdateAsync(entity);
         }
     }
 }

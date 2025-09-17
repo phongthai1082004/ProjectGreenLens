@@ -38,5 +38,7 @@ namespace ProjectGreenLens.Models.Entities
         public List<AIAdvicesLogs> aiAdvicesLogs { get; set; } = new();
         public List<CaresSchedules> careSchedules { get; set; } = new();
         public List<CareHistory> careHistories { get; set; } = new();
+
+
     }
 }

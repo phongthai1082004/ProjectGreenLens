@@ -1,56 +1,483 @@
-﻿using Microsoft.EntityFrameworkCore;
-using ProjectGreenLens.Infrastructure.dbContext;
-using ProjectGreenLens.Models.DTOs;
+﻿using AutoMapper;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using ProjectGreenLens.Exceptions;
+using ProjectGreenLens.Models.DTOs.Auth;
 using ProjectGreenLens.Models.Entities;
 using ProjectGreenLens.Repositories.Interfaces;
 using ProjectGreenLens.Services.Interfaces;
+using ProjectGreenLens.Settings;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace ProjectGreenLens.Services.Implementations
 {
     public class AuthService : IAuthService
     {
+        private readonly IUserRepository _userRepository;
+        private readonly IBaseRepository<UserToken> _tokenRepository;
+        private readonly IBaseRepository<Role> _roleRepository;
+        private readonly IEmailService _emailService;
+        private readonly IMapper _mapper;
+        private readonly JwtSettings _jwtSettings;
+        private readonly ILogger<AuthService> _logger;
 
-        private GreenLensDbContext _context;
-        private readonly IUserRepository _iUserRepository;
-
-        public AuthService(GreenLensDbContext context, IUserRepository iUserRepository)
+        public AuthService(
+            IUserRepository userRepository,
+            IBaseRepository<UserToken> tokenRepository,
+            IBaseRepository<Role> roleRepository,
+            IEmailService emailService,
+            IMapper mapper,
+            IOptions<JwtSettings> jwtOptions,
+            ILogger<AuthService> logger)
         {
-            _context = context;
-            _iUserRepository = iUserRepository;
+            _userRepository = userRepository;
+            _tokenRepository = tokenRepository;
+            _roleRepository = roleRepository;
+            _emailService = emailService;
+            _mapper = mapper;
+            _jwtSettings = jwtOptions.Value;
+            _logger = logger;
         }
 
-        public async Task<User?> AuthenticateAsync(string username, string password)
+        // Private
+
+        // Private methods
+        private string GenerateAccessToken(User user)
         {
-            // Find username
-            var user = await _context.users
-                .AsNoTracking()
-                .FirstOrDefaultAsync(u => u.username == username);
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key));
+            var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            if (user == null)
-                return null;
+            var claims = new[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.id.ToString()),
+                new Claim(ClaimTypes.Email, user.email),
+                new Claim(ClaimTypes.Name, user.username),
+                 new Claim(ClaimTypes.Role, user.roleId.ToString()),
+                new Claim("guid", user.uniqueGuid.ToString())
+            };
 
-            // Matching password
-            bool isPasswordValid = BCrypt.Net.BCrypt.Verify(password, user.passwordHash);
-            return isPasswordValid ? user : null;
+            var token = new JwtSecurityToken(
+                issuer: _jwtSettings.Issuer,
+                audience: _jwtSettings.Audience,
+                claims: claims,
+                expires: DateTime.UtcNow.AddMinutes(_jwtSettings.ExpiryMinutes),
+                signingCredentials: credentials
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        public async Task<User> CreateUserAsync(RegisterUserDto dto)
+        private string GenerateSecureToken()
         {
-            // Find if user is existed
-            //if (await _context.users.AnyAsync(u => u.username == dto.Username))
-            //{
-
-            //}
-
-            throw new NotImplementedException();
-            // Create
-
-            // Save
+            using var rng = RandomNumberGenerator.Create();
+            var tokenBytes = new byte[32];
+            rng.GetBytes(tokenBytes);
+            return Convert.ToBase64String(tokenBytes);
         }
 
-        public Task<User?> GetByIdAsync(string id)
+        private async Task SendVerificationEmailAsync(string email, string token)
         {
-            throw new NotImplementedException();
+            var subject = "Email Verification - ProjectGreenLens";
+            var body = $@"
+                <h2>Email Verification</h2>
+                <p>Please click the link below to verify your email address:</p>
+                <a href='https://yourdomain.com/verify-email?token={token}'>Verify Email</a>
+                <p>This link will expire in 24 hours.</p>
+            ";
+
+            await _emailService.SendEmailAsync(email, subject, body);
+        }
+
+        private async Task SendPasswordResetEmailAsync(string email, string token)
+        {
+            var subject = "Password Reset - ProjectGreenLens";
+            var body = $@"
+                <h2>Password Reset</h2>
+                <p>Please click the link below to reset your password:</p>
+                <a href='https://yourdomain.com/reset-password?token={token}'>Reset Password</a>
+                <p>This link will expire in 1 hour.</p>
+            ";
+
+            await _emailService.SendEmailAsync(email, subject, body);
+        }
+
+        private string HashPassword(string password)
+        {
+            return BCrypt.Net.BCrypt.HashPassword(password);
+        }
+
+        private bool VerifyPassword(string password, string hashedPassword)
+        {
+            return BCrypt.Net.BCrypt.Verify(password, hashedPassword);
+        }
+
+        public async Task<UserResponseDto> RegisterAsync(UserRegisterDto dto)
+        {
+            try
+            {
+                _logger.LogInformation("Attempting to register user with email: {Email}", dto.email);
+
+                // Check if user already exist
+                var existingUser = await _userRepository.GetByEmailAsync(dto.email);
+                if (existingUser != null)
+                {
+                    throw new InvalidOperationException("User with this email already exists");
+                }
+
+                // Check if role exists
+                var role = await _roleRepository.GetByIdAsync(dto.roleId);
+                if (role == null)
+                {
+                    throw new NotFoundException("Role not found");
+                }
+                var hashedPassword = HashPassword(dto.password);
+
+                // Add User
+                var userToAdd = new UserAddDto
+                {
+                    username = dto.username,
+                    email = dto.email,
+                    passwordHash = hashedPassword,
+                    roleId = dto.roleId
+                };
+
+                var user = _mapper.Map<User>(userToAdd);
+                user.isEmailVerified = false;
+                user.createdAt = DateTime.UtcNow;
+                user.updatedAt = DateTime.UtcNow;
+
+                // Returned Json
+                var createdUser = await _userRepository.CreateAsync(user);
+
+                // Generate Token
+
+                var verificationToken = GenerateSecureToken();
+                var tokenEntity = new UserToken
+                {
+                    token = verificationToken,
+                    expiresAt = DateTime.UtcNow.AddHours(24),
+                    isRevoked = false,
+                    type = UserToken.TokenType.VerifyEmail,
+                    userId = createdUser.id,
+                    createdAt = DateTime.UtcNow,
+                    updatedAt = DateTime.UtcNow
+                };
+
+                await _tokenRepository.CreateAsync(tokenEntity);
+
+                // Send verification email
+                await SendVerificationEmailAsync(createdUser.email, verificationToken);
+
+                var response = _mapper.Map<UserResponseDto>(createdUser);
+
+                _logger.LogInformation("User registered successfully with ID: {UserId}", createdUser.id);
+                return response;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while registering user with email: {Email}", dto.email);
+                throw;
+            }
+        }
+
+        public async Task<AuthResponseDto> LoginAsync(UserLoginDto dto)
+        {
+            try
+            {
+                _logger.LogInformation("Attempting to login user with email: {Email}", dto.email);
+                // Get user by email
+                var user = await _userRepository.GetByEmailAsync(dto.email);
+                if (user == null)
+                {
+                    throw new UnauthorizedAccessException("Invalid email or password");
+                }
+                // Verify password
+                if (!VerifyPassword(dto.password, user.passwordHash))
+                {
+                    throw new UnauthorizedAccessException("Invalid email or password");
+                }
+                if (!user.isEmailVerified)
+                {
+                    throw new UnauthorizedAccessException("Please verify your email before logging in");
+                }
+                // Generate tokens
+                var accessToken = GenerateAccessToken(user);
+                var refreshToken = GenerateSecureToken();
+
+                var tokenEntity = new UserToken
+                {
+                    token = refreshToken,
+                    expiresAt = DateTime.UtcNow.AddDays(7),
+                    isRevoked = false,
+                    type = UserToken.TokenType.RefreshToken,
+                    userId = user.id,
+                    createdAt = DateTime.UtcNow,
+                    updatedAt = DateTime.UtcNow
+                };
+
+                await _tokenRepository.CreateAsync(tokenEntity);
+                var response = new AuthResponseDto
+                {
+                    accessToken = accessToken,
+                    refreshToken = refreshToken,
+                    expiresAt = DateTime.UtcNow.AddMinutes(_jwtSettings.ExpiryMinutes),
+                    user = _mapper.Map<UserResponseDto>(user)
+                };
+                _logger.LogInformation("User logged in successfully with ID: {UserId}", user.id);
+                return response;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while logging in user with email: {Email}", dto.email);
+                throw;
+            }
+        }
+
+        public async Task<AuthResponseDto> RefreshTokenAsync(RefreshTokenDto dto)
+        {
+            try
+            {
+                _logger.LogInformation("Attempting to refresh token");
+
+                var tokenEntities = await _tokenRepository.GetAllAsync();
+                var tokenEntity = tokenEntities.FirstOrDefault(t =>
+                   t.token == dto.refreshToken &&
+                   t.type == UserToken.TokenType.RefreshToken &&
+                   !t.isRevoked &&
+                   t.expiresAt > DateTime.UtcNow);
+
+                if (tokenEntity == null)
+                {
+                    throw new UnauthorizedAccessException("Invalid or expired refresh token");
+                }
+                var user = await _userRepository.GetByIdAsync(tokenEntity.userId);
+                if (user == null)
+                {
+                    throw new NotFoundException("User not found");
+                }
+
+                // Revoke old refresh token
+                tokenEntity.isRevoked = true;
+                tokenEntity.updatedAt = DateTime.UtcNow;
+                await _tokenRepository.UpdateAsync(tokenEntity);
+
+                // Generate new tokens
+                var newAccessToken = GenerateAccessToken(user);
+                var newRefreshToken = GenerateSecureToken();
+
+                // Save new refresh token
+                var newTokenEntity = new UserToken
+                {
+                    token = newRefreshToken,
+                    expiresAt = DateTime.UtcNow.AddDays(7),
+                    isRevoked = false,
+                    type = UserToken.TokenType.RefreshToken,
+                    userId = user.id,
+                    createdAt = DateTime.UtcNow,
+                    updatedAt = DateTime.UtcNow
+                };
+
+                await _tokenRepository.CreateAsync(newTokenEntity);
+
+                var response = new AuthResponseDto
+                {
+                    accessToken = newAccessToken,
+                    refreshToken = newRefreshToken,
+                    expiresAt = DateTime.UtcNow.AddMinutes(_jwtSettings.ExpiryMinutes),
+                    user = _mapper.Map<UserResponseDto>(user)
+                };
+
+                _logger.LogInformation("Token refreshed successfully for user ID: {UserId}", user.id);
+                return response;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while refreshing token");
+                throw;
+            }
+        }
+
+        public async Task LogoutAsync(int userId, RefreshTokenDto dto)
+        {
+            try
+            {
+                _logger.LogInformation("Attempting to logout user with ID: {UserId}", userId);
+
+                // Find and revoke the refresh token
+                var tokenEntities = await _tokenRepository.GetAllAsync();
+                var tokenEntity = tokenEntities.FirstOrDefault(t =>
+                    t.token == dto.refreshToken &&
+                    t.userId == userId &&
+                    t.type == UserToken.TokenType.RefreshToken &&
+                    !t.isRevoked);
+
+                if (tokenEntity != null)
+                {
+                    tokenEntity.isRevoked = true;
+                    await _tokenRepository.UpdateAsync(tokenEntity);
+                }
+
+                _logger.LogInformation("User logged out successfully with ID: {UserId}", userId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while logging out user with ID: {UserId}", userId);
+                throw;
+            }
+        }
+
+        public async Task RequestPasswordResetAsync(ForgotPasswordDto dto)
+        {
+            try
+            {
+                _logger.LogInformation("Attempting to request password reset for email: {Email}", dto.email);
+
+                var user = await _userRepository.GetByEmailAsync(dto.email);
+                if (user == null)
+                {
+                    // Don't reveal if email exists or not for security reasons
+                    _logger.LogWarning("Password reset requested for non-existing email: {Email}", dto.email);
+                    return;
+                }
+
+                // Revoke any existing password reset tokens for this user
+                var existingTokens = await _tokenRepository.GetAllAsync();
+                var userResetTokens = existingTokens.Where(t =>
+                    t.userId == user.id &&
+                    t.type == UserToken.TokenType.ResetPassword &&
+                    !t.isRevoked).ToList();
+
+                foreach (var existingToken in userResetTokens)
+                {
+                    existingToken.isRevoked = true;
+                    await _tokenRepository.UpdateAsync(existingToken);
+                }
+
+                // Generate password reset token
+                var resetToken = GenerateSecureToken();
+                var tokenEntity = new UserToken
+                {
+                    token = resetToken,
+                    expiresAt = DateTime.UtcNow.AddHours(1), // 1 hour expiry
+                    isRevoked = false,
+                    type = UserToken.TokenType.ResetPassword,
+                    userId = user.id,
+                    createdAt = DateTime.UtcNow
+                };
+
+                await _tokenRepository.CreateAsync(tokenEntity);
+
+                // Send password reset email
+                await SendPasswordResetEmailAsync(user.email, resetToken);
+
+                _logger.LogInformation("Password reset token sent for user ID: {UserId}", user.id);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while requesting password reset for email: {Email}", dto.email);
+                throw;
+            }
+        }
+
+        public async Task ResetPasswordAsync(ResetPasswordDto dto)
+        {
+            try
+            {
+                _logger.LogInformation("Attempting to reset password with token");
+
+                // Find the password reset token
+                var tokenEntities = await _tokenRepository.GetAllAsync();
+                var tokenEntity = tokenEntities.FirstOrDefault(t =>
+                    t.token == dto.token &&
+                    t.type == UserToken.TokenType.ResetPassword &&
+                    !t.isRevoked &&
+                    t.expiresAt > DateTime.UtcNow);
+
+                if (tokenEntity == null)
+                {
+                    throw new UnauthorizedAccessException("Invalid or expired reset token");
+                }
+
+                // Get user
+                var user = await _userRepository.GetByIdAsync(tokenEntity.userId);
+                if (user == null)
+                {
+                    throw new NotFoundException("User not found");
+                }
+
+                // Hash new password and update trực tiếp
+                var hashedPassword = HashPassword(dto.newPassword);
+                user.passwordHash = hashedPassword;
+                user.updatedAt = DateTime.UtcNow;
+                await _userRepository.UpdateAsync(user);
+
+                // Revoke the reset token
+                tokenEntity.isRevoked = true;
+                await _tokenRepository.UpdateAsync(tokenEntity);
+
+                // Revoke all refresh tokens for this user (force re-login)
+                var allTokens = await _tokenRepository.GetAllAsync();
+                var userRefreshTokens = allTokens.Where(t =>
+                    t.userId == user.id &&
+                    t.type == UserToken.TokenType.RefreshToken &&
+                    !t.isRevoked).ToList();
+
+                foreach (var refreshToken in userRefreshTokens)
+                {
+                    refreshToken.isRevoked = true;
+                    await _tokenRepository.UpdateAsync(refreshToken);
+                }
+
+                _logger.LogInformation("Password reset successfully for user ID: {UserId}", user.id);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while resetting password");
+                throw;
+            }
+        }
+
+        public async Task VerifyEmailAsync(string token)
+        {
+            try
+            {
+                _logger.LogInformation("Attempting to verify email with token");
+
+                var tokenEntities = await _tokenRepository.GetAllAsync();
+                var tokenEntity = tokenEntities.FirstOrDefault(t =>
+                    t.token == token &&
+                    t.type == UserToken.TokenType.VerifyEmail &&
+                    !t.isRevoked &&
+                    t.expiresAt > DateTime.UtcNow);
+
+                if (tokenEntity == null)
+                {
+                    throw new UnauthorizedAccessException("Invalid or expired verification token");
+                }
+
+                var user = await _userRepository.GetByIdAsync(tokenEntity.userId);
+                if (user == null)
+                {
+                    throw new NotFoundException("User not found");
+                }
+
+                user.isEmailVerified = true;
+                user.updatedAt = DateTime.UtcNow;
+                await _userRepository.UpdateAsync(user);
+
+                tokenEntity.isRevoked = true;
+                await _tokenRepository.UpdateAsync(tokenEntity);
+
+                _logger.LogInformation("Email verified successfully for user ID: {UserId}", user.id);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while verifying email");
+                throw;
+            }
         }
     }
 }

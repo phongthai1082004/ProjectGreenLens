@@ -1,6 +1,4 @@
-﻿using ProjectGreenLens.Models.DTOs;
-using System.ComponentModel.DataAnnotations;
-using System.Net;
+﻿using ProjectGreenLens.Settings;
 using System.Text.Json;
 
 namespace ProjectGreenLens.Infrastructure.Middleware.ErrorHandlingMiddleware
@@ -22,57 +20,41 @@ namespace ProjectGreenLens.Infrastructure.Middleware.ErrorHandlingMiddleware
             {
                 await _next(context);
             }
-            catch (ValidationException vex) // lỗi validation
+            catch (System.Exception ex)
             {
-                _logger.LogWarning(vex, "Validation failed");
+                // map exception -> (statusCode, message)
+                var (statusCode, message, logLevel) = MapException(ex);
 
+                // log theo severity
+                _logger.Log(logLevel, ex, "Exception caught: {Message}", ex.Message);
+
+                // tạo error response
+                var errorResponse = ApiResponse<object>.Fail(message);
+
+                context.Response.StatusCode = statusCode;
                 context.Response.ContentType = "application/json";
-                context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
 
-                var response = ApiResponse<object>.Fail(
-                    message: "Validation failed",
-                    errors: new List<string> { vex.Message }
-                );
+                var json = JsonSerializer.Serialize(errorResponse, new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                });
 
-                await WriteJsonResponse(context, response);
-            }
-            catch (UnauthorizedAccessException uex)
-            {
-                _logger.LogWarning(uex, "Unauthorized request");
-
-                context.Response.ContentType = "application/json";
-                context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-
-                var response = ApiResponse<object>.Fail(
-                    message: "Unauthorized",
-                    errors: new List<string> { uex.Message }
-                );
-
-                await WriteJsonResponse(context, response);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Unhandled exception");
-
-                context.Response.ContentType = "application/json";
-                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-
-                var response = ApiResponse<object>.Fail(
-                    message: "An unexpected error occurred",
-                    errors: new List<string> { ex.Message }
-                );
-
-                await WriteJsonResponse(context, response);
+                await context.Response.WriteAsync(json);
             }
         }
 
-        private async Task WriteJsonResponse<T>(HttpContext context, ApiResponse<T> response)
+        private static (int StatusCode, string Message, LogLevel Level) MapException(System.Exception ex)
         {
-            var json = JsonSerializer.Serialize(response, new JsonSerializerOptions
+            return ex switch
             {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-            });
-            await context.Response.WriteAsync(json);
+                ProjectGreenLens.Exceptions.NotFoundException => (StatusCodes.Status404NotFound, ex.Message, LogLevel.Warning),
+                UnauthorizedAccessException => (StatusCodes.Status401Unauthorized, ex.Message, LogLevel.Warning),
+                InvalidOperationException => (StatusCodes.Status400BadRequest, ex.Message, LogLevel.Warning),
+                System.ComponentModel.DataAnnotations.ValidationException => (StatusCodes.Status400BadRequest, ex.Message, LogLevel.Warning),
+                ProjectGreenLens.Exceptions.ValidationException => (StatusCodes.Status400BadRequest, ex.Message, LogLevel.Warning),
+
+                _ => (StatusCodes.Status500InternalServerError, "Internal server error", LogLevel.Error)
+            };
         }
     }
 }

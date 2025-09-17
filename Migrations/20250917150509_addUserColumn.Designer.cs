@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjectGreenLens.Infrastructure.dbContext;
 
@@ -11,9 +12,11 @@ using ProjectGreenLens.Infrastructure.dbContext;
 namespace ProjectGreenLens.Migrations
 {
     [DbContext(typeof(GreenLensDbContext))]
-    partial class GreenLensDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250917150509_addUserColumn")]
+    partial class addUserColumn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

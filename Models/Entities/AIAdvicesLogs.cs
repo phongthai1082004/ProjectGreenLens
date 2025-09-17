@@ -6,12 +6,20 @@ namespace ProjectGreenLens.Models.Entities
     public class AIAdvicesLogs : BaseEntity
     {
         [Required]
-        public int userPlantId { get; set; }
+        public int userId { get; set; }
+
+        [ForeignKey(nameof(userId))]
+        public User user { get; set; } = null!;
+
+        public int? userPlantId { get; set; }
 
         [ForeignKey(nameof(userPlantId))]
-        public UserPlant userPlant { get; set; } = null!;
+        public UserPlant? userPlant { get; set; }
 
-        [MaxLength(2000)]
-        public string? adviceText { get; set; }
+        [Required, MaxLength(20)]
+        public string role { get; set; } = "user";
+
+        [Required, MaxLength(2000)]
+        public string content { get; set; } = null!;
     }
 }

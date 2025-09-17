@@ -1,54 +1,66 @@
-﻿using ProjectGreenLens.Models.Entities;
+﻿using AutoMapper;
+using ProjectGreenLens.Models.Entities;
 using ProjectGreenLens.Repositories.Interfaces;
 using ProjectGreenLens.Services.Interfaces;
 
 namespace ProjectGreenLens.Services.Implementations
 {
-    public class BaseService<T> : IBaseService<T> where T : BaseEntity
+    public class BaseService<TEntity, TResponseDto, TAddDto, TUpdateDto>
+    : IBaseService<TEntity, TResponseDto, TAddDto, TUpdateDto>
+    where TEntity : BaseEntity
     {
-        private readonly IBaseRepository<T> _repository;
+        private readonly IBaseRepository<TEntity> _repository;
+        private readonly IMapper _mapper;
 
-        public BaseService(IBaseRepository<T> repository)
+        public BaseService(IBaseRepository<TEntity> repository, IMapper mapper)
         {
-            _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+            _repository = repository;
+            _mapper = mapper;
         }
 
-        public async Task<IEnumerable<T>> getAllAsync()
+        public async Task<IEnumerable<TResponseDto>> GetAllAsync()
         {
-            return await _repository.getAllAsync();
+            var entities = await _repository.GetAllAsync();
+            return _mapper.Map<IEnumerable<TResponseDto>>(entities);
         }
 
-        public async Task<T> getByIdAsync(int id)
+        public async Task<TResponseDto> GetByIdAsync(int id)
         {
-            var entity = await _repository.getByIdAsync(id);
+            var entity = await _repository.GetByIdAsync(id);
             if (entity == null)
-                throw new KeyNotFoundException($"{typeof(T).Name} with Id={id} was not found.");
+                throw new KeyNotFoundException($"{typeof(TEntity).Name} with Id={id} was not found.");
 
-            return entity;
+            return _mapper.Map<TResponseDto>(entity);
         }
 
-        public async Task<T> createAsync(T entity)
+        public async Task<TResponseDto> CreateAsync(TAddDto dto)
         {
-            return await _repository.createAsync(entity);
+            var entity = _mapper.Map<TEntity>(dto);
+            var created = await _repository.CreateAsync(entity);
+            return _mapper.Map<TResponseDto>(created);
         }
 
-        public async Task<T> updateAsync(T entity)
+        public async Task<TResponseDto> UpdateAsync(TUpdateDto dto)
         {
-            var existing = await _repository.getByIdAsync(entity.id);
+
+            var existing = await _repository.GetByIdAsync((dto as dynamic).id);
             if (existing == null)
-                throw new KeyNotFoundException($"{typeof(T).Name} with Id={entity.id} was not found.");
+                throw new KeyNotFoundException($"{typeof(TEntity).Name} with Id={(dto as dynamic).id} was not found.");
 
-            await _repository.updateAsync(entity);
-            return entity;
+
+            _mapper.Map(dto, existing);
+
+            await _repository.UpdateAsync(existing);
+            return _mapper.Map<TResponseDto>(existing);
         }
 
-        public async Task<bool> deleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
-            var entity = await _repository.getByIdAsync(id);
+            var entity = await _repository.GetByIdAsync(id);
             if (entity == null)
-                throw new KeyNotFoundException($"{typeof(T).Name} with Id={id} was not found.");
+                throw new KeyNotFoundException($"{typeof(TEntity).Name} with Id={id} was not found.");
 
-            await _repository.deleteAsync(entity);
+            await _repository.DeleteAsync(entity);
             return true;
         }
     }

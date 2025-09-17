@@ -1,11 +1,11 @@
 ﻿namespace ProjectGreenLens.Repositories.Interfaces
 {
-    public interface IBaseRepository<T>
+    public interface IBaseRepository<T> where T : class
     {
-        Task<IEnumerable<T>> getAllAsync();
-        Task<T> createAsync(T entity);
-        Task updateAsync(T entity);
-        Task<T?> getByIdAsync(int id);
-        Task deleteAsync(T entity);
+        Task<IEnumerable<T>> GetAllAsync();
+        Task<T> CreateAsync(T entity);
+        Task UpdateAsync(T entity);
+        Task<T?> GetByIdAsync(int id);
+        Task DeleteAsync(T entity);
     }
 }

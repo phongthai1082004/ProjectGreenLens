@@ -1,12 +1,15 @@
-﻿using ProjectGreenLens.Models.DTOs;
+﻿using ProjectGreenLens.Models.DTOs.Auth;
 
 namespace ProjectGreenLens.Services.Interfaces
 {
     public interface IAuthService
     {
-        Task<string> LoginAsync(string username, string password);
-        Task<UserResponseDto> RegisterAsync(RegisterUserDto registerDto);
-        Task<bool> LogoutAsync(string userId);
-        Task<bool> ForgotPasswordAsync(string email);
+        Task<UserResponseDto> RegisterAsync(UserRegisterDto dto);
+        Task<AuthResponseDto> LoginAsync(UserLoginDto dto);
+        Task<AuthResponseDto> RefreshTokenAsync(RefreshTokenDto dto);
+        Task LogoutAsync(int userId, RefreshTokenDto dto);
+        Task RequestPasswordResetAsync(ForgotPasswordDto dto);
+        Task ResetPasswordAsync(ResetPasswordDto dto);
+        Task VerifyEmailAsync(string token);
     }
 }

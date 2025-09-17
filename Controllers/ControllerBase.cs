@@ -1,75 +1,57 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ProjectGreenLens.Models.Entities;
 using ProjectGreenLens.Services.Interfaces;
 
 namespace ProjectGreenLens.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
-    public class BaseController<T> : ControllerBase where T : BaseEntity, new()
+    [Route("api/[controller]")]
+    public class BaseController<TEntity, TResponseDto, TAddDto, TUpdateDto> : ControllerBase
     {
+        protected readonly IBaseService<TEntity, TResponseDto, TAddDto, TUpdateDto> _service;
 
-        protected readonly IBaseService<T> _service;
+        public BaseController(IBaseService<TEntity, TResponseDto, TAddDto, TUpdateDto> service)
+        {
+            _service = service;
+        }
 
-        public BaseController(IBaseService<T> service)
-        {
-            _service = service ?? throw new ArgumentNullException(nameof(service));
-        }
-        [HttpGet("{id}")]
-        public async Task<ActionResult<T>> GetById(int id)
-        {
-            try
-            {
-                var entity = await _service.getByIdAsync(id);
-                return Ok(entity);
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-        }
+        // GET: api/[controller]
         [HttpGet]
+        public virtual async Task<IActionResult> GetAll()
+        {
+            var result = await _service.GetAllAsync();
+            return Ok(result); // ApiResponseMiddleware sẽ wrap
+        }
 
-        public async Task<ActionResult<IEnumerable<T>>> GetAll()
+        // GET: api/[controller]/{id}
+        [HttpGet("{id}")]
+        public virtual async Task<IActionResult> GetById(int id)
         {
-            var entities = await _service.getAllAsync();
-            return Ok(entities);
+            var result = await _service.GetByIdAsync(id);
+            return Ok(result);
         }
+
+        // POST: api/[controller]
         [HttpPost]
-        public async Task<ActionResult<T>> Create([FromBody] T entity)
+        public virtual async Task<IActionResult> Create([FromBody] TAddDto dto)
         {
-            if (entity == null)
-                return BadRequest("Entity cannot be null.");
-            var createdEntity = await _service.createAsync(entity);
-            return CreatedAtAction(nameof(GetById), new { id = createdEntity.id }, createdEntity);
+            var result = await _service.CreateAsync(dto);
+            return Ok(result);
         }
+
+        // PUT: api/[controller]
         [HttpPut]
-        public async Task<ActionResult<T>> Update([FromBody] T entity)
+        public virtual async Task<IActionResult> Update([FromBody] TUpdateDto dto)
         {
-            if (entity == null || entity.id <= 0)
-                return BadRequest("Invalid entity or ID.");
-            try
-            {
-                var updatedEntity = await _service.updateAsync(entity);
-                return Ok(updatedEntity);
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
+            var result = await _service.UpdateAsync(dto);
+            return Ok(result);
         }
+
+        // DELETE: api/[controller]/{id}
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public virtual async Task<IActionResult> Delete(int id)
         {
-            try
-            {
-                await _service.deleteAsync(id);
-                return NoContent();
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
+            var result = await _service.DeleteAsync(id);
+            return Ok(result);
         }
     }
 }

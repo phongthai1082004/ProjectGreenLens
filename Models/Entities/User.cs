@@ -15,10 +15,15 @@ namespace ProjectGreenLens.Models.Entities
         public string passwordHash { get; set; } = null!;
 
         [Required]
+        [Column("roleId")]
+        public int roleId { get; set; }
+
+        [ForeignKey(nameof(roleId))]
         public Role role { get; set; } = null!;
+        public bool isEmailVerified { get; set; } = false;
 
+        // Navigation properties
         public UserProfile? userProfile { get; set; }
-
         public List<LogEntry> logEntries { get; set; } = new();
         public List<Payment> payments { get; set; } = new();
         public NurseryProfile? nurseryProfile { get; set; }
@@ -30,5 +35,8 @@ namespace ProjectGreenLens.Models.Entities
 
         [InverseProperty(nameof(UserMessage.receiver))]
         public List<UserMessage> receivedMessages { get; set; } = new();
+
+        public List<UserToken> userTokens { get; set; } = new();
+        public List<AIAdvicesLogs> aiAdvicesLogs { get; set; } = new();
     }
 }

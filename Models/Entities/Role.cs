@@ -6,11 +6,12 @@ namespace ProjectGreenLens.Models.Entities
     {
         [Required]
         [MaxLength(50)]
-        public required string name { get; set; }
+        public string name { get; set; } = null!;
 
         [MaxLength(500)]
-        public required string description { get; set; }
+        public string description { get; set; } = null!;
 
         public ICollection<RolePermission> rolePermissions { get; set; } = new List<RolePermission>();
+        public ICollection<User> users { get; set; } = new List<User>();
     }
 }
