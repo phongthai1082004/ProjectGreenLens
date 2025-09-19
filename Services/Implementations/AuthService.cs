@@ -23,6 +23,7 @@ namespace ProjectGreenLens.Services.Implementations
         private readonly IMapper _mapper;
         private readonly JwtSettings _jwtSettings;
         private readonly ILogger<AuthService> _logger;
+        private readonly string _frontendUrl;
 
         public AuthService(
             IUserRepository userRepository,
@@ -31,7 +32,8 @@ namespace ProjectGreenLens.Services.Implementations
             IEmailService emailService,
             IMapper mapper,
             IOptions<JwtSettings> jwtOptions,
-            ILogger<AuthService> logger)
+            ILogger<AuthService> logger,
+            IConfiguration config)
         {
             _userRepository = userRepository;
             _tokenRepository = tokenRepository;
@@ -40,6 +42,7 @@ namespace ProjectGreenLens.Services.Implementations
             _mapper = mapper;
             _jwtSettings = jwtOptions.Value;
             _logger = logger;
+            _frontendUrl = config["AppSettings:FrontendUrl"];
         }
 
         // Private
@@ -82,11 +85,11 @@ namespace ProjectGreenLens.Services.Implementations
         {
             var subject = "Email Verification - ProjectGreenLens";
             var body = $@"
-                <h2>Email Verification</h2>
-                <p>Please click the link below to verify your email address:</p>
-                <a href='https://yourdomain.com/verify-email?token={token}'>Verify Email</a>
-                <p>This link will expire in 24 hours.</p>
-            ";
+            <h2>Email Verification</h2>
+            <p>Please click the link below to verify your email address:</p>
+            <a href='{_frontendUrl}/verify-email?token={token}'>Verify Email</a>
+            <p>This link will expire in 24 hours.</p>
+        ";
 
             await _emailService.SendEmailAsync(email, subject, body);
         }
@@ -95,11 +98,11 @@ namespace ProjectGreenLens.Services.Implementations
         {
             var subject = "Password Reset - ProjectGreenLens";
             var body = $@"
-                <h2>Password Reset</h2>
-                <p>Please click the link below to reset your password:</p>
-                <a href='https://yourdomain.com/reset-password?token={token}'>Reset Password</a>
-                <p>This link will expire in 1 hour.</p>
-            ";
+            <h2>Password Reset</h2>
+            <p>Please click the link below to reset your password:</p>
+            <a href='{_frontendUrl}/reset-password?token={token}'>Reset Password</a>
+            <p>This link will expire in 1 hour.</p>
+        ";
 
             await _emailService.SendEmailAsync(email, subject, body);
         }

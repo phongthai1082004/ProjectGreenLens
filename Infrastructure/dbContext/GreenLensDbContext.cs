@@ -32,7 +32,8 @@ namespace ProjectGreenLens.Infrastructure.dbContext
         public DbSet<UserPlant> UserPlants { get; set; } = null!;
         public DbSet<UserProfile> UserProfiles { get; set; } = null!;
         public DbSet<UserToken> UserTokens { get; set; } = null!;
-
+        public DbSet<PermissionQuota> PermissionQuotas { get; set; } = null!;
+        public DbSet<UserPermissionUsage> UserPermissionUsages { get; set; } = null!;
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Cấu hình BaseEntity
@@ -253,13 +254,74 @@ namespace ProjectGreenLens.Infrastructure.dbContext
                 entity.Property(e => e.userId).HasColumnType("int").IsRequired();
                 entity.HasOne(e => e.user).WithMany(u => u.userTokens).HasForeignKey(e => e.userId);
             });
+            // RolePermission: composite key
+            modelBuilder.Entity<RolePermission>(entity =>
+            {
+                entity.HasKey(rp => new { rp.roleId, rp.permissionId });
+
+                entity.HasOne(rp => rp.role)
+                      .WithMany(r => r.rolePermissions)
+                      .HasForeignKey(rp => rp.roleId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(rp => rp.permission)
+                      .WithMany(p => p.rolePermissions)
+                      .HasForeignKey(rp => rp.permissionId)
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<RolePermission>()
+                .HasKey(rp => new { rp.roleId, rp.permissionId });
+            // PermissionQuota: composite key (roleId + permissionId)
+            modelBuilder.Entity<PermissionQuota>(entity =>
+            {
+                entity.HasKey(pq => new { pq.roleId, pq.permissionId });
+
+                entity.Property(pq => pq.usageLimit)
+                      .IsRequired();
+
+                entity.HasOne(pq => pq.role)
+                      .WithMany()
+                      .HasForeignKey(pq => pq.roleId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(pq => pq.permission)
+                      .WithMany()
+                      .HasForeignKey(pq => pq.permissionId)
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            // UserPermissionUsage: composite key (userId + permissionId)
+            modelBuilder.Entity<UserPermissionUsage>(entity =>
+            {
+                entity.HasKey(upu => new { upu.userId, upu.permissionId });
+
+                entity.Property(upu => upu.usedCount)
+                      .IsRequired();
+
+                entity.Property(upu => upu.lastUsedAt)
+                      .IsRequired();
+
+                entity.HasOne(upu => upu.user)
+                      .WithMany(u => u.permissionUsages)
+                      .HasForeignKey(upu => upu.userId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(upu => upu.permission)
+                      .WithMany(p => p.userPermissionUsages)
+                      .HasForeignKey(upu => upu.permissionId)
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
 
             // Seed dữ liệu cho Role
             modelBuilder.Entity<Role>().HasData(
-                new Role { id = 1, name = "admin", description = "Administrator with full permissions", uniqueGuid = new Guid("11111111-1111-1111-1111-111111111111"), createdAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc), updatedAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc) },
-                new Role { id = 2, name = "user", description = "Regular user with limited permissions", uniqueGuid = new Guid("22222222-2222-2222-2222-222222222222"), createdAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc), updatedAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc) },
-                new Role { id = 3, name = "nursery", description = "Nursery staff with specific permissions", uniqueGuid = new Guid("33333333-3333-3333-3333-333333333333"), createdAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc), updatedAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc) }
-            );
+                new Role { id = 1, name = "Quản Trị Viên", description = "Administrator with full permissions", uniqueGuid = new Guid("11111111-1111-1111-1111-111111111111"), createdAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc), updatedAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc) },
+                new Role { id = 2, name = "Người Dùng", description = "Regular user with limited permissions", uniqueGuid = new Guid("22222222-2222-2222-2222-222222222222"), createdAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc), updatedAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc) },
+                new Role { id = 3, name = "Vườn Ươm", description = "Nursery staff with specific permissions", uniqueGuid = new Guid("33333333-3333-3333-3333-333333333333"), createdAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc), updatedAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc) },
+                new Role { id = 4, name = "Người Dùng Bạc", description = "Entry-level user with basic feature access", uniqueGuid = new Guid("44444444-4444-4444-4444-444444444444"), createdAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc), updatedAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc) },
+                new Role { id = 5, name = "Người Dùng Vàng", description = "Intermediate user with extended feature access", uniqueGuid = new Guid("55555555-5555-5555-5555-555555555555"), createdAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc), updatedAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc) },
+                new Role { id = 6, name = "Người Dùng Kim Cương", description = "Advanced user with premium feature access", createdAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc), updatedAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc) }
+                );
 
             // Seed dữ liệu cho Permission
             modelBuilder.Entity<Permission>().HasData(
@@ -286,6 +348,7 @@ namespace ProjectGreenLens.Infrastructure.dbContext
                 new RolePermission { roleId = 3, permissionId = 2 },
                 new RolePermission { roleId = 3, permissionId = 4 }
             );
+
         }
 
         private static void ConfigureBaseEntity(ModelBuilder modelBuilder)

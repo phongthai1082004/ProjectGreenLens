@@ -12,5 +12,6 @@ namespace ProjectGreenLens.Models.Entities
         public required string description { get; set; }
 
         public ICollection<RolePermission> rolePermissions { get; set; } = new List<RolePermission>();
+        public ICollection<UserPermissionUsage> userPermissionUsages { get; set; } = new List<UserPermissionUsage>();
     }
 }

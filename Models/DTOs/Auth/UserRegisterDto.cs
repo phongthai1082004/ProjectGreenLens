@@ -1,19 +1,20 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using ProjectGreenLens.Exceptions;
+using System.ComponentModel.DataAnnotations;
 
 namespace ProjectGreenLens.Models.DTOs.Auth
 {
     public class UserRegisterDto
     {
-        [Required(ErrorMessage = "Username is required")]
-        [MaxLength(50, ErrorMessage = "Username cannot exceed 50 characters")]
+        [Required(ErrorMessage = ValidationMessages.RequiredUsername)]
+        [MaxLength(50, ErrorMessage = ValidationMessages.UsernameMaxLength)]
         public string username { get; set; } = null!;
 
-        [Required(ErrorMessage = "Email is required")]
-        [EmailAddress(ErrorMessage = "Invalid email format")]
-        [MaxLength(100, ErrorMessage = "Email cannot exceed 100 characters")]
+        [Required(ErrorMessage = ValidationMessages.RequiredEmail)]
+        [EmailAddress(ErrorMessage = ValidationMessages.InvalidEmail)]
+        [MaxLength(100, ErrorMessage = ValidationMessages.EmailMaxLength)]
         public string email { get; set; } = null!;
 
-        [Required(ErrorMessage = "Password is required")]
+        [Required(ErrorMessage = ValidationMessages.RequiredPassword)]
         [ComplexPassword]
         public string password { get; set; } = null!;
 

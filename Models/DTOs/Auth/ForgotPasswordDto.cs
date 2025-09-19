@@ -1,11 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using ProjectGreenLens.Exceptions;
+using System.ComponentModel.DataAnnotations;
 
 namespace ProjectGreenLens.Models.DTOs.Auth
 {
     public class ForgotPasswordDto
     {
-        [Required(ErrorMessage = "Email is required")]
-        [EmailAddress(ErrorMessage = "Invalid email format")]
+        [Required(ErrorMessage = ValidationMessages.RequiredPassword)]
+        [EmailAddress(ErrorMessage = ValidationMessages.InvalidEmail)]
         public string email { get; set; } = null!;
     }
 }

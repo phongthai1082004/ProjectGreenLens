@@ -1,13 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using ProjectGreenLens.Exceptions;
+using System.ComponentModel.DataAnnotations;
 
 namespace ProjectGreenLens.Models.DTOs.Auth
 {
     public class ResetPasswordDto
     {
-        [Required(ErrorMessage = "Reset token is required")]
+        [Required(ErrorMessage = ValidationMessages.RequiredRefreshToken)]
         public string token { get; set; } = null!;
 
-        [Required(ErrorMessage = "New password is required")]
+        [Required(ErrorMessage = ValidationMessages.RequiredPassword)]
         [ComplexPassword]
         public string newPassword { get; set; } = null!;
     }

@@ -38,5 +38,7 @@ namespace ProjectGreenLens.Models.Entities
 
         public List<UserToken> userTokens { get; set; } = new();
         public List<AIAdvicesLogs> aiAdvicesLogs { get; set; } = new();
+        public ICollection<UserPermissionUsage> permissionUsages { get; set; } = new List<UserPermissionUsage>();
+
     }
 }
