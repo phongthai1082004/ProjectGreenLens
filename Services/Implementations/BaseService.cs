@@ -33,14 +33,14 @@ namespace ProjectGreenLens.Services.Implementations
             return _mapper.Map<TResponseDto>(entity);
         }
 
-        public async Task<TResponseDto> CreateAsync(TAddDto dto)
+        public virtual async Task<TResponseDto> CreateAsync(TAddDto dto)
         {
             var entity = _mapper.Map<TEntity>(dto);
             var created = await _repository.CreateAsync(entity);
             return _mapper.Map<TResponseDto>(created);
         }
 
-        public async Task<TResponseDto> UpdateAsync(TUpdateDto dto)
+        public virtual async Task<TResponseDto> UpdateAsync(TUpdateDto dto)
         {
 
             var existing = await _repository.GetByIdAsync((dto as dynamic).id);

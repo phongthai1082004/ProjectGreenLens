@@ -42,7 +42,12 @@ builder.Services.AddScoped(typeof(IBaseService<,,,>), typeof(BaseService<,,,>));
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserTokenRepository, UserTokenRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
-
+builder.Services.AddScoped<IGuideRepository, GuideRepository>();
+builder.Services.AddScoped<IPlantRepository, PlantRepository>();
+builder.Services.AddScoped<IArModelRepository, ArModelRepository>();
+builder.Services.AddScoped<IPlantCategoryRepository, PlantCategoryRepository>();
+builder.Services.AddScoped<IPlantPhotoRepository, PlantPhotoRepository>();
+builder.Services.AddScoped<IPlantService, PlantService>();
 
 // Email settings
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));

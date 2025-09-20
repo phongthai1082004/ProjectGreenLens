@@ -27,10 +27,10 @@ namespace ProjectGreenLens.Models.Entities
         public bool isIndoor { get; set; }         // Cây trong nhà hay ngoài trời
 
         [MaxLength(100)]
-        public int wateringFrequency { get; set; }  // "Weekly", "Daily", "Monthly"
+        public int wateringFrequency { get; set; }
 
         [MaxLength(100)]
-        public int lightRequirement { get; set; }   // "Low", "Medium", "High"
+        public int lightRequirement { get; set; }
 
         [MaxLength(100)]
         public string? soilType { get; set; }           // Loại đất phù hợp
@@ -41,5 +41,18 @@ namespace ProjectGreenLens.Models.Entities
         public List<Photo> photos { get; set; } = new();
         public List<Guide> guides { get; set; } = new();
         public List<UserPlant> userPlants { get; set; } = new();
+    }
+    public enum WateringFrequency
+    {
+        Daily = 1,
+        TwoTimesAWeek = 2,
+        ThreeTimesAweek = 3
+    }
+
+    public enum LightRequirement
+    {
+        Low = 1,
+        Medium = 2,
+        High = 3
     }
 }

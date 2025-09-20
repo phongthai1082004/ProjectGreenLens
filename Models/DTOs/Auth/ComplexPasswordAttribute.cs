@@ -16,27 +16,27 @@ namespace ProjectGreenLens.Models.DTOs.Auth
             string password = value.ToString()!;
             if (password.Length < 8)
             {
-                return new ValidationResult(ValidationMessages.PasswordTooShort);
+                return new ValidationResult(ValidationMessages.PasswordMinLength);
             }
 
             if (!Regex.IsMatch(password, @"[a-z]"))
             {
-                return new ValidationResult(ValidationMessages.PasswordMissingLowercase);
+                return new ValidationResult(ValidationMessages.PasswordRequireLower);
             }
 
             if (!Regex.IsMatch(password, @"[A-Z]"))
             {
-                return new ValidationResult(ValidationMessages.PasswordMissingUppercase);
+                return new ValidationResult(ValidationMessages.PasswordRequireUpper);
             }
 
             if (!Regex.IsMatch(password, @"\d"))
             {
-                return new ValidationResult(ValidationMessages.PasswordMissingDigit);
+                return new ValidationResult(ValidationMessages.PasswordRequireDigit);
             }
 
             if (!Regex.IsMatch(password, @"[!@#$%^&*(),.?""':;{}|<>]"))
             {
-                return new ValidationResult(ValidationMessages.PasswordMissingSpecialChar);
+                return new ValidationResult(ValidationMessages.PasswordRequireSpecial);
             }
 
             return ValidationResult.Success;

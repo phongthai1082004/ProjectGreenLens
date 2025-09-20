@@ -30,4 +30,11 @@ namespace ProjectGreenLens.Models.Entities
 
         public DateTime? completedAt { get; set; }
     }
+
+    public enum Frequency
+    {
+        Daily = 1,
+        Weekly = 2,
+        Monthly = 3
+    }
 }

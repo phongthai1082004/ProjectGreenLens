@@ -1,5 +1,9 @@
 ﻿using AutoMapper;
+using ProjectGreenLens.Models.DTOs.ArModel;
 using ProjectGreenLens.Models.DTOs.Auth;
+using ProjectGreenLens.Models.DTOs.Guide;
+using ProjectGreenLens.Models.DTOs.Plant;
+using ProjectGreenLens.Models.DTOs.PlantPhoto;
 using ProjectGreenLens.Models.Entities;
 
 namespace ProjectGreenLens.Infrastructure.Mapping
@@ -76,6 +80,91 @@ namespace ProjectGreenLens.Infrastructure.Mapping
                 .ForMember(dest => dest.updatedAt, opt => opt.Ignore()) // Set manually in service
                 .ForMember(dest => dest.user, opt => opt.Ignore()) // Navigation property
                 .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
+
+            // Plant Entity -> PlantResponseDto
+            CreateMap<Plant, PlantResponseDto>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.id))
+                .ForMember(dest => dest.UniqueGuid, opt => opt.MapFrom(src => src.uniqueGuid))
+                .ForMember(dest => dest.ScientificName, opt => opt.MapFrom(src => src.scientificName))
+                .ForMember(dest => dest.CommonName, opt => opt.MapFrom(src => src.commonName))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.description))
+                .ForMember(dest => dest.CareInstructions, opt => opt.MapFrom(src => src.careInstructions))
+                .ForMember(dest => dest.PlantCategoryId, opt => opt.MapFrom(src => src.plantCategoryId))
+                .ForMember(dest => dest.PlantCategoryName, opt => opt.MapFrom(src => src.plantCategory != null ? src.plantCategory.name : null))
+                .ForMember(dest => dest.IsIndoor, opt => opt.MapFrom(src => src.isIndoor))
+                .ForMember(dest => dest.WateringFrequency, opt => opt.MapFrom(src => src.wateringFrequency))
+                .ForMember(dest => dest.LightRequirement, opt => opt.MapFrom(src => src.lightRequirement))
+                .ForMember(dest => dest.SoilType, opt => opt.MapFrom(src => src.soilType))
+                .ForMember(dest => dest.AveragePrice, opt => opt.MapFrom(src => src.averagePrice))
+                .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.createdAt))
+                .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => src.updatedAt))
+                .ForMember(dest => dest.ArModel, opt => opt.MapFrom(src => src.arModel))
+                .ForMember(dest => dest.Photos, opt => opt.MapFrom(src => src.photos))
+                .ForMember(dest => dest.Guides, opt => opt.MapFrom(src => src.guides));
+
+            // PlantAddDto -> Plant Entity
+            CreateMap<PlantAddDto, Plant>()
+                .ForMember(dest => dest.scientificName, opt => opt.MapFrom(src => src.ScientificName))
+                .ForMember(dest => dest.commonName, opt => opt.MapFrom(src => src.CommonName))
+                .ForMember(dest => dest.description, opt => opt.MapFrom(src => src.Description))
+                .ForMember(dest => dest.careInstructions, opt => opt.MapFrom(src => src.CareInstructions))
+                .ForMember(dest => dest.plantCategoryId, opt => opt.MapFrom(src => src.PlantCategoryId))
+                .ForMember(dest => dest.isIndoor, opt => opt.MapFrom(src => src.IsIndoor))
+                .ForMember(dest => dest.wateringFrequency, opt => opt.MapFrom(src => src.WateringFrequency))
+                .ForMember(dest => dest.lightRequirement, opt => opt.MapFrom(src => src.LightRequirement))
+                .ForMember(dest => dest.soilType, opt => opt.MapFrom(src => src.SoilType))
+                .ForMember(dest => dest.averagePrice, opt => opt.MapFrom(src => src.AveragePrice))
+                .ForMember(dest => dest.id, opt => opt.Ignore())
+                .ForMember(dest => dest.uniqueGuid, opt => opt.Ignore())
+                .ForMember(dest => dest.createdAt, opt => opt.Ignore())
+                .ForMember(dest => dest.updatedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.isDelete, opt => opt.Ignore())
+                .ForMember(dest => dest.deletedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.plantCategory, opt => opt.Ignore())
+                .ForMember(dest => dest.arModel, opt => opt.Ignore())
+                .ForMember(dest => dest.photos, opt => opt.Ignore())
+                .ForMember(dest => dest.guides, opt => opt.Ignore())
+                .ForMember(dest => dest.userPlants, opt => opt.Ignore());
+
+            // PlantUpdateDto -> Plant Entity
+            CreateMap<PlantUpdateDto, Plant>()
+                .ForMember(dest => dest.id, opt => opt.MapFrom(src => src.id))
+                .ForMember(dest => dest.scientificName, opt => opt.MapFrom(src => src.ScientificName))
+                .ForMember(dest => dest.commonName, opt => opt.MapFrom(src => src.CommonName))
+                .ForMember(dest => dest.description, opt => opt.MapFrom(src => src.Description))
+                .ForMember(dest => dest.careInstructions, opt => opt.MapFrom(src => src.CareInstructions))
+                .ForMember(dest => dest.plantCategoryId, opt => opt.MapFrom(src => src.PlantCategoryId))
+                .ForMember(dest => dest.isIndoor, opt => opt.MapFrom(src => src.IsIndoor))
+                .ForMember(dest => dest.wateringFrequency, opt => opt.MapFrom(src => src.WateringFrequency))
+                .ForMember(dest => dest.lightRequirement, opt => opt.MapFrom(src => src.LightRequirement))
+                .ForMember(dest => dest.soilType, opt => opt.MapFrom(src => src.SoilType))
+                .ForMember(dest => dest.averagePrice, opt => opt.MapFrom(src => src.AveragePrice))
+                .ForMember(dest => dest.uniqueGuid, opt => opt.Ignore())
+                .ForMember(dest => dest.createdAt, opt => opt.Ignore())
+                .ForMember(dest => dest.updatedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.isDelete, opt => opt.Ignore())
+                .ForMember(dest => dest.deletedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.plantCategory, opt => opt.Ignore())
+                .ForMember(dest => dest.arModel, opt => opt.Ignore())
+                .ForMember(dest => dest.photos, opt => opt.Ignore())
+                .ForMember(dest => dest.guides, opt => opt.Ignore())
+                .ForMember(dest => dest.userPlants, opt => opt.Ignore());
+
+            // Navigation properties mapping
+            CreateMap<ArModel, ArModelResponseDto>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.id))
+                .ForMember(dest => dest.ModelUrl, opt => opt.MapFrom(src => src.modelUrl))
+                .ForMember(dest => dest.FileFormat, opt => opt.MapFrom(src => src.fileFormat));
+
+            CreateMap<Photo, PhotoResponseDto>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.id))
+                .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.photoUrl))
+                .ForMember(dest => dest.Caption, opt => opt.MapFrom(src => src.caption));
+
+            CreateMap<Guide, GuideResponseDto>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.id))
+                .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.title))
+                .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.content));
         }
     }
 }
