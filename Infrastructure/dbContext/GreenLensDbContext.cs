@@ -48,7 +48,7 @@ namespace ProjectGreenLens.Infrastructure.dbContext
                 entity.Property(e => e.userId).HasColumnType("int").IsRequired();
                 entity.Property(e => e.userPlantId).HasColumnType("int"); // Không bắt buộc
                 entity.Property(e => e.role).HasColumnType("varchar(20)").IsRequired();
-                entity.Property(e => e.content).HasColumnType("varchar(2000)").IsRequired();
+                entity.Property(e => e.content).HasColumnType("varchar(10000)").IsRequired();
                 entity.HasOne(e => e.user).WithMany(u => u.aiAdvicesLogs).HasForeignKey(e => e.userId).OnDelete(DeleteBehavior.Restrict);
                 entity.HasOne(e => e.userPlant).WithMany(up => up.aiAdvicesLogs).HasForeignKey(e => e.userPlantId).OnDelete(DeleteBehavior.Restrict);
             });

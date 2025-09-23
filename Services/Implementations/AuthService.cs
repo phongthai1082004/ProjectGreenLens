@@ -127,7 +127,7 @@ namespace ProjectGreenLens.Services.Implementations
                 var existingUser = await _userRepository.GetByEmailAsync(dto.email);
                 if (existingUser != null)
                 {
-                    throw new InvalidOperationException("User with this email already exists");
+                    throw new InvalidOperationException("Tài Khoản đã tổn tại!");
                 }
 
                 // Check if role exists
@@ -195,16 +195,16 @@ namespace ProjectGreenLens.Services.Implementations
                 var user = await _userRepository.GetByEmailAsync(dto.email);
                 if (user == null)
                 {
-                    throw new UnauthorizedAccessException("Invalid email or password");
+                    throw new UnauthorizedAccessException("Mật khẩu không đúng!");
                 }
                 // Verify password
                 if (!VerifyPassword(dto.password, user.passwordHash))
                 {
-                    throw new UnauthorizedAccessException("Invalid email or password");
+                    throw new UnauthorizedAccessException("Email hoặc mật khẩu không hợp lệ!");
                 }
                 if (!user.isEmailVerified)
                 {
-                    throw new UnauthorizedAccessException("Please verify your email before logging in");
+                    throw new UnauthorizedAccessException("Hãy xác thực tải khoản trước khi sử dụng!");
                 }
                 // Generate tokens
                 var accessToken = GenerateAccessToken(user);
@@ -430,7 +430,7 @@ namespace ProjectGreenLens.Services.Implementations
                 var user = await _userRepository.GetByIdAsync(tokenEntity.userId);
                 if (user == null)
                 {
-                    throw new NotFoundException("User not found");
+                    throw new NotFoundException("Người dùng không tồn tại!");
                 }
 
                 // Hash new password and update trực tiếp

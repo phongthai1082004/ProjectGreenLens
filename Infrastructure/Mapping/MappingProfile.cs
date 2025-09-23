@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ProjectGreenLens.Models.DTOs.AIAdvice;
 using ProjectGreenLens.Models.DTOs.ArModel;
 using ProjectGreenLens.Models.DTOs.Auth;
 using ProjectGreenLens.Models.DTOs.Guide;
@@ -165,6 +166,60 @@ namespace ProjectGreenLens.Infrastructure.Mapping
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.id))
                 .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.title))
                 .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.content));
+
+            // AIAdvicesLogs -> AIAdviceResponseDto
+            CreateMap<AIAdvicesLogs, AIAdviceResponseDto>()
+                .ForMember(dest => dest.id, opt => opt.MapFrom(src => src.id))
+                .ForMember(dest => dest.createdAt, opt => opt.MapFrom(src => src.createdAt))
+                .ForMember(dest => dest.isDelete, opt => opt.MapFrom(src => src.isDelete))
+                .ForMember(dest => dest.userId, opt => opt.MapFrom(src => src.userId))
+                .ForMember(dest => dest.userPlantId, opt => opt.MapFrom(src => src.userPlantId))
+                .ForMember(dest => dest.role, opt => opt.MapFrom(src => src.role))
+                .ForMember(dest => dest.content, opt => opt.MapFrom(src => src.content));
+
+            // AIAdviceAddDto -> AIAdvicesLogs (giữ nguyên như cũ)
+            CreateMap<AIAdviceAddDto, AIAdvicesLogs>()
+                .ForMember(dest => dest.userId, opt => opt.MapFrom(src => src.userId))
+                .ForMember(dest => dest.userPlantId, opt => opt.MapFrom(src => src.userPlantId))
+                .ForMember(dest => dest.role, opt => opt.MapFrom(src => src.role))
+                .ForMember(dest => dest.content, opt => opt.MapFrom(src => src.content))
+                .ForMember(dest => dest.id, opt => opt.Ignore())
+                .ForMember(dest => dest.uniqueGuid, opt => opt.Ignore())
+                .ForMember(dest => dest.createdAt, opt => opt.Ignore())
+                .ForMember(dest => dest.updatedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.isDelete, opt => opt.Ignore())
+                .ForMember(dest => dest.deletedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.user, opt => opt.Ignore())
+                .ForMember(dest => dest.userPlant, opt => opt.Ignore());
+
+            // AIAdviceUpdateDto -> AIAdvicesLogs (giữ nguyên như cũ)
+            CreateMap<AIAdviceUpdateDto, AIAdvicesLogs>()
+                .ForMember(dest => dest.id, opt => opt.MapFrom(src => src.id))
+                .ForMember(dest => dest.userPlantId, opt => opt.MapFrom(src => src.userPlantId))
+                .ForMember(dest => dest.role, opt => opt.MapFrom(src => src.role))
+                .ForMember(dest => dest.content, opt => opt.MapFrom(src => src.content))
+                .ForMember(dest => dest.userId, opt => opt.Ignore())
+                .ForMember(dest => dest.uniqueGuid, opt => opt.Ignore())
+                .ForMember(dest => dest.createdAt, opt => opt.Ignore())
+                .ForMember(dest => dest.updatedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.isDelete, opt => opt.Ignore())
+                .ForMember(dest => dest.deletedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.user, opt => opt.Ignore())
+                .ForMember(dest => dest.userPlant, opt => opt.Ignore());
+
+            // AIAdviceRequestDto -> AIAdviceAddDto (giữ nguyên như cũ)
+            CreateMap<AIAdviceRequestDto, AIAdviceAddDto>()
+                .ForMember(dest => dest.content, opt => opt.MapFrom(src => src.content))
+                .ForMember(dest => dest.userPlantId, opt => opt.MapFrom(src => src.userPlantId))
+                .ForMember(dest => dest.role, opt => opt.MapFrom(src => "user"))
+                .ForMember(dest => dest.userId, opt => opt.Ignore());
+
+
+            // Entity -> DTO
+            CreateMap<AIAdvicesLogs, AIAdviceResponseDto>();
+
+            // DTO -> Entity (nếu cần)
+            CreateMap<AIAdviceResponseDto, AIAdvicesLogs>();
         }
     }
 }
