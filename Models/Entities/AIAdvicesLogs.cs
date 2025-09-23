@@ -19,7 +19,7 @@ namespace ProjectGreenLens.Models.Entities
         [Required, MaxLength(20)]
         public string role { get; set; } = "user";
 
-        [Required, MaxLength(2000)]
+        [Required, MaxLength(10000)]
         public string content { get; set; } = null!;
     }
 }

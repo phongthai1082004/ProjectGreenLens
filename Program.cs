@@ -48,7 +48,14 @@ builder.Services.AddScoped<IArModelRepository, ArModelRepository>();
 builder.Services.AddScoped<IPlantPhotoRepository, PlantPhotoRepository>();
 builder.Services.AddScoped<IPlantCategoryRepository, PlantCategoryRepository>();
 builder.Services.AddScoped<IPlantService, PlantService>();
+builder.Services.AddScoped<IAIAdviceService, AIAdviceService>();
+builder.Services.AddScoped<IAIAdvicesLogsRepository, AIAdvicesLogsRepository>();
+builder.Services.AddScoped<IUserPlantRepository, UserPlantRepository>();
 
+
+
+// API Gemini
+builder.Services.AddScoped<IGeminiService, GeminiService>();
 // Email settings
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.AddScoped<IEmailService, EmailService>();
@@ -158,6 +165,11 @@ builder.WebHost.ConfigureKestrel(options =>
         listenOptions.UseHttps();
     });
 });
+
+// API Gemini
+builder.Services.Configure<GoogleAISettings>(
+    builder.Configuration.GetSection("GoogleAISettings")
+    );
 
 var app = builder.Build();
 

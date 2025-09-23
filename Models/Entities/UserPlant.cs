@@ -27,8 +27,8 @@ namespace ProjectGreenLens.Models.Entities
         public string? notes { get; set; }
 
         // Thêm trạng thái sức khỏe
-        [MaxLength(50)]
-        public int healthStatus { get; set; }  // "Healthy", "Sick", "Recovering"
+        [Required]
+        public PlantHealthStatus healthStatus { get; set; } = PlantHealthStatus.Healthy;  // "Healthy", "Sick", "Recovering"
 
         [MaxLength(500)]
         public string? currentLocation { get; set; }  // Vị trí hiện tại của cây
@@ -38,7 +38,13 @@ namespace ProjectGreenLens.Models.Entities
         public List<AIAdvicesLogs> aiAdvicesLogs { get; set; } = new();
         public List<CaresSchedules> careSchedules { get; set; } = new();
         public List<CareHistory> careHistories { get; set; } = new();
+    }
 
-
+    public enum PlantHealthStatus
+    {
+        Healthy = 0,
+        Sick = 1,
+        Recovering = 2,
+        Unknown = 3,
     }
 }

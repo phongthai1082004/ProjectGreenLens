@@ -11,5 +11,6 @@ namespace ProjectGreenLens.Services.Interfaces
 
         // Get single plant with details
         Task<PlantResponseDto> GetByIdWithDetailsAsync(int id);
+
     }
 }
