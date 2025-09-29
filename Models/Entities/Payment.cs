@@ -20,16 +20,31 @@ namespace ProjectGreenLens.Models.Entities
         [Required, MaxLength(50)]
         public string paymentMethod { get; set; } = null!;
 
-        [Required, MaxLength(20)]
-        public string status { get; set; } = null!;
+        [Required]
+        [Column(TypeName = "nvarchar(20)")]
+        public PaymentStatus status { get; set; }
+
+        [MaxLength(255)]
+        public string? transactionId { get; set; }
+        public string? description { get; set; }
 
         [MaxLength(100)]
-        public string? transactionId { get; set; }
+        public string? orderId { get; set; }
 
-        [MaxLength(500)]
-        public string? description { get; set; }
+        [MaxLength(255)]
+        public string? purchaseToken { get; set; }
+
+        public int? productRefId { get; set; }
+        [ForeignKey(nameof(productRefId))]
+        public Product? product { get; set; }
 
         public DateTime? processedAt { get; set; }
     }
-
+    public enum PaymentStatus
+    {
+        Pending,
+        Completed,
+        Failed,
+        Refunded
+    }
 }

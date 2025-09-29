@@ -48,7 +48,7 @@ namespace ProjectGreenLens.Infrastructure.dbContext
                 entity.Property(e => e.userId).HasColumnType("int").IsRequired();
                 entity.Property(e => e.userPlantId).HasColumnType("int"); // Không bắt buộc
                 entity.Property(e => e.role).HasColumnType("varchar(20)").IsRequired();
-                entity.Property(e => e.content).HasColumnType("varchar(10000)").IsRequired();
+                entity.Property(e => e.content).HasColumnType("varchar(4000)").IsRequired();
                 entity.HasOne(e => e.user).WithMany(u => u.aiAdvicesLogs).HasForeignKey(e => e.userId).OnDelete(DeleteBehavior.Restrict);
                 entity.HasOne(e => e.userPlant).WithMany(up => up.aiAdvicesLogs).HasForeignKey(e => e.userPlantId).OnDelete(DeleteBehavior.Restrict);
             });
@@ -94,7 +94,7 @@ namespace ProjectGreenLens.Infrastructure.dbContext
             {
                 entity.Property(e => e.plantId).HasColumnType("int").IsRequired();
                 entity.Property(e => e.title).HasColumnType("nvarchar(200)").IsRequired();
-                entity.Property(e => e.content).HasColumnType("nvarchar(max)"); // Không bắt buộc
+                entity.Property(e => e.content).HasColumnType("nvarchar(4000)"); // Không bắt buộc
                 entity.HasOne(e => e.plant).WithMany(p => p.guides).HasForeignKey(e => e.plantId);
             });
 
@@ -118,20 +118,84 @@ namespace ProjectGreenLens.Infrastructure.dbContext
                 entity.HasOne(e => e.user).WithOne(u => u.nurseryProfile).HasForeignKey<NurseryProfile>(e => e.userId);
             });
 
-            // Cấu hình kiểu dữ liệu cho Payment
+
             modelBuilder.Entity<Payment>(entity =>
             {
-                entity.Property(e => e.userId).HasColumnType("int").IsRequired();
-                entity.Property(e => e.amount).HasColumnType("decimal(18,2)").IsRequired();
-                entity.Property(e => e.currency).HasColumnType("varchar(10)").IsRequired();
-                entity.Property(e => e.paymentMethod).HasColumnType("nvarchar(50)").IsRequired();
-                entity.Property(e => e.status).HasColumnType("nvarchar(20)").IsRequired();
-                entity.Property(e => e.transactionId).HasColumnType("nvarchar(100)"); // Không bắt buộc
-                entity.Property(e => e.description).HasColumnType("nvarchar(500)"); // Không bắt buộc
-                entity.Property(e => e.processedAt).HasColumnType("datetime2"); // Không bắt buộc
-                entity.HasOne(e => e.user).WithMany(u => u.payments).HasForeignKey(e => e.userId);
+                entity.ToTable("Payments");
+
+                entity.Property(p => p.userId)
+                      .IsRequired();
+
+                entity.HasOne(p => p.user)
+                      .WithMany()
+                      .HasForeignKey(p => p.userId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                entity.Property(p => p.amount)
+                      .IsRequired()
+                      .HasColumnType("decimal(18,2)");
+
+                entity.Property(p => p.currency)
+                      .IsRequired()
+                      .HasMaxLength(10);
+
+                entity.Property(p => p.paymentMethod)
+                      .IsRequired()
+                      .HasMaxLength(50);
+
+                entity.Property(p => p.status)
+                      .IsRequired()
+                      .HasConversion<string>()          // Enum lưu dưới dạng string
+                      .HasColumnType("nvarchar(20)");
+
+                entity.Property(p => p.transactionId)
+                      .HasMaxLength(255);
+
+                entity.Property(p => p.description)
+                      .HasMaxLength(500);               // vẫn giữ description
+
+                entity.Property(p => p.orderId)
+                      .HasMaxLength(100);
+
+                entity.Property(p => p.purchaseToken)
+                      .HasMaxLength(255);
+
+                entity.Property(p => p.productRefId);
+
+                entity.HasOne(p => p.product)
+                      .WithMany()
+                      .HasForeignKey(p => p.productRefId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.Property(p => p.processedAt);
             });
 
+            modelBuilder.Entity<Product>(entity =>
+            {
+                entity.ToTable("Products");
+                entity.Property(p => p.ProductId)
+                      .IsRequired()
+                      .HasMaxLength(100);
+
+                entity.Property(p => p.Name)
+                      .IsRequired()
+                      .HasMaxLength(255);
+
+                entity.Property(p => p.Description)
+                      .HasMaxLength(500);
+
+                entity.Property(p => p.Price)
+                      .HasColumnType("decimal(18,2)");
+
+                entity.Property(p => p.Currency)
+                      .IsRequired()
+                      .HasMaxLength(10);
+
+                entity.Property(p => p.Type)
+                      .IsRequired()
+                      .HasConversion<string>()          // Enum lưu string
+                      .HasMaxLength(50);
+            });
             // Cấu hình kiểu dữ liệu cho Permission
             modelBuilder.Entity<Permission>(entity =>
             {

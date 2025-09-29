@@ -6,7 +6,7 @@ namespace ProjectGreenLens.Models.DTOs.AIAdvice
     public class AIAdviceAddDto
     {
         [Required(ErrorMessage = GeminiErrorMessages.CONTENT_REQUIRED)]
-        [MaxLength(10000, ErrorMessage = GeminiErrorMessages.CONTENT_TOO_LONG)]
+        [MaxLength(4000, ErrorMessage = GeminiErrorMessages.CONTENT_TOO_LONG)]
         public string content { get; set; } = null!;
 
         public int? userPlantId { get; set; }
