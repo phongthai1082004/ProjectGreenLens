@@ -12,8 +12,8 @@ using ProjectGreenLens.Infrastructure.dbContext;
 namespace ProjectGreenLens.Migrations
 {
     [DbContext(typeof(GreenLensDbContext))]
-    [Migration("20250923174054_IncreaseAIAdviceContentLength")]
-    partial class IncreaseAIAdviceContentLength
+    [Migration("20250929044925_AddProductsTable")]
+    partial class AddProductsTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -35,8 +35,8 @@ namespace ProjectGreenLens.Migrations
 
                     b.Property<string>("content")
                         .IsRequired()
-                        .HasMaxLength(10000)
-                        .HasColumnType("varchar(10000)");
+                        .HasMaxLength(4000)
+                        .HasColumnType("varchar(4000)");
 
                     b.Property<DateTime>("createdAt")
                         .ValueGeneratedOnAdd()
@@ -284,7 +284,7 @@ namespace ProjectGreenLens.Migrations
 
                     b.Property<string>("content")
                         .HasMaxLength(5000)
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(4000)");
 
                     b.Property<DateTime>("createdAt")
                         .ValueGeneratedOnAdd()
@@ -449,6 +449,9 @@ namespace ProjectGreenLens.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
+                    b.Property<int?>("Userid")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("amount")
                         .HasColumnType("decimal(18,2)");
 
@@ -460,7 +463,7 @@ namespace ProjectGreenLens.Migrations
                     b.Property<string>("currency")
                         .IsRequired()
                         .HasMaxLength(10)
-                        .HasColumnType("varchar(10)");
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<DateTime?>("deletedAt")
                         .HasColumnType("datetime2");
@@ -474,6 +477,10 @@ namespace ProjectGreenLens.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
+                    b.Property<string>("orderId")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<string>("paymentMethod")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -482,14 +489,20 @@ namespace ProjectGreenLens.Migrations
                     b.Property<DateTime?>("processedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("productRefId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("purchaseToken")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
                     b.Property<string>("status")
                         .IsRequired()
-                        .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("transactionId")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<Guid>("uniqueGuid")
                         .ValueGeneratedOnAdd()
@@ -506,13 +519,17 @@ namespace ProjectGreenLens.Migrations
 
                     b.HasKey("id");
 
+                    b.HasIndex("Userid");
+
                     b.HasIndex("createdAt")
                         .HasDatabaseName("IX_Payments_CreatedAt");
+
+                    b.HasIndex("productRefId");
 
                     b.HasIndex("userId", "status", "createdAt")
                         .HasDatabaseName("IX_Payment_UserStatusCreated");
 
-                    b.ToTable("Payments");
+                    b.ToTable("Payments", (string)null);
                 });
 
             modelBuilder.Entity("ProjectGreenLens.Models.Entities.Permission", b =>
@@ -918,6 +935,73 @@ namespace ProjectGreenLens.Migrations
                         .HasDatabaseName("IX_PlantDiseases_CreatedAt");
 
                     b.ToTable("PlantDiseases");
+                });
+
+            modelBuilder.Entity("ProjectGreenLens.Models.Entities.Product", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("ProductId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("createdAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<DateTime?>("deletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("isDelete")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<Guid>("uniqueGuid")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
+
+                    b.Property<DateTime>("updatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("createdAt")
+                        .HasDatabaseName("IX_Product_CreatedAt");
+
+                    b.ToTable("Products", (string)null);
                 });
 
             modelBuilder.Entity("ProjectGreenLens.Models.Entities.Role", b =>
@@ -1557,11 +1641,22 @@ namespace ProjectGreenLens.Migrations
 
             modelBuilder.Entity("ProjectGreenLens.Models.Entities.Payment", b =>
                 {
-                    b.HasOne("ProjectGreenLens.Models.Entities.User", "user")
+                    b.HasOne("ProjectGreenLens.Models.Entities.User", null)
                         .WithMany("payments")
+                        .HasForeignKey("Userid");
+
+                    b.HasOne("ProjectGreenLens.Models.Entities.Product", "product")
+                        .WithMany()
+                        .HasForeignKey("productRefId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("ProjectGreenLens.Models.Entities.User", "user")
+                        .WithMany()
                         .HasForeignKey("userId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("product");
 
                     b.Navigation("user");
                 });
