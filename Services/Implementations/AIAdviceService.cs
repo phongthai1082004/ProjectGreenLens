@@ -62,7 +62,7 @@ namespace ProjectGreenLens.Services.Implementations
             }
 
             // Gọi Google AI để lấy lời khuyên
-            var aiResponse = await _googleAIService.GetPlantAdviceAsync(request.content, plantInfo);
+            var apiResponse = await _googleAIService.GetPlantAdviceAsync(request.content, plantInfo);
 
             // Lưu câu trả lời của AI
             var assistantResponseDto = new AIAdviceAddDto
@@ -70,7 +70,7 @@ namespace ProjectGreenLens.Services.Implementations
                 userId = userId,
                 userPlantId = request.userPlantId,
                 role = "assistant",
-                content = aiResponse
+                content = apiResponse
             };
 
             var savedResponse = await CreateAsync(assistantResponseDto);
