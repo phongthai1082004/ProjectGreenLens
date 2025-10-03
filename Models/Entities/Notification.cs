@@ -3,17 +3,17 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProjectGreenLens.Models.Entities
 {
-    public class LogEntry : BaseEntity
+    public class Notification : BaseEntity
     {
         [Required]
         public int userId { get; set; }
-
         [ForeignKey(nameof(userId))]
         public User user { get; set; } = null!;
 
-        [Required, MaxLength(100)]
-        public string action { get; set; } = null!;
-
-        public string? metadata { get; set; }
+        [Required]
+        public string type { get; set; } = null!; // e.g. "care_reminder", "system", "comment"
+        [Required]
+        public string content { get; set; } = null!;
+        public bool isRead { get; set; } = false;
     }
 }

@@ -25,12 +25,8 @@ namespace ProjectGreenLens.Infrastructure.Mapping
                 .ForMember(dest => dest.updatedAt, opt => opt.Ignore()) // Set manually in service
                 .ForMember(dest => dest.role, opt => opt.Ignore()) // Navigation property
                 .ForMember(dest => dest.userProfile, opt => opt.Ignore()) // Navigation property
-                .ForMember(dest => dest.logEntries, opt => opt.Ignore()) // Navigation property
                 .ForMember(dest => dest.payments, opt => opt.Ignore()) // Navigation property
-                .ForMember(dest => dest.nurseryProfile, opt => opt.Ignore()) // Navigation property
                 .ForMember(dest => dest.userPlants, opt => opt.Ignore()) // Navigation property
-                .ForMember(dest => dest.sentMessages, opt => opt.Ignore()) // Navigation property
-                .ForMember(dest => dest.receivedMessages, opt => opt.Ignore()) // Navigation property
                 .ForMember(dest => dest.userTokens, opt => opt.Ignore()) // Navigation property
                 .ForMember(dest => dest.aiAdvicesLogs, opt => opt.Ignore()); // Navigation property
 
@@ -47,12 +43,8 @@ namespace ProjectGreenLens.Infrastructure.Mapping
                 .ForMember(dest => dest.isEmailVerified, opt => opt.Ignore()) // Handled separately in service
                 .ForMember(dest => dest.role, opt => opt.Ignore()) // Navigation property
                 .ForMember(dest => dest.userProfile, opt => opt.Ignore()) // Navigation property
-                .ForMember(dest => dest.logEntries, opt => opt.Ignore()) // Navigation property
                 .ForMember(dest => dest.payments, opt => opt.Ignore()) // Navigation property
-                .ForMember(dest => dest.nurseryProfile, opt => opt.Ignore()) // Navigation property
                 .ForMember(dest => dest.userPlants, opt => opt.Ignore()) // Navigation property
-                .ForMember(dest => dest.sentMessages, opt => opt.Ignore()) // Navigation property
-                .ForMember(dest => dest.receivedMessages, opt => opt.Ignore()) // Navigation property
                 .ForMember(dest => dest.userTokens, opt => opt.Ignore()) // Navigation property
                 .ForMember(dest => dest.aiAdvicesLogs, opt => opt.Ignore()) // Navigation property
                 .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
@@ -99,7 +91,6 @@ namespace ProjectGreenLens.Infrastructure.Mapping
                 .ForMember(dest => dest.AveragePrice, opt => opt.MapFrom(src => src.averagePrice))
                 .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.createdAt))
                 .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => src.updatedAt))
-                .ForMember(dest => dest.ArModel, opt => opt.MapFrom(src => src.arModel))
                 .ForMember(dest => dest.Photos, opt => opt.MapFrom(src => src.photos))
                 .ForMember(dest => dest.Guides, opt => opt.MapFrom(src => src.guides));
 
@@ -122,7 +113,6 @@ namespace ProjectGreenLens.Infrastructure.Mapping
                 .ForMember(dest => dest.isDelete, opt => opt.Ignore())
                 .ForMember(dest => dest.deletedAt, opt => opt.Ignore())
                 .ForMember(dest => dest.plantCategory, opt => opt.Ignore())
-                .ForMember(dest => dest.arModel, opt => opt.Ignore())
                 .ForMember(dest => dest.photos, opt => opt.Ignore())
                 .ForMember(dest => dest.guides, opt => opt.Ignore())
                 .ForMember(dest => dest.userPlants, opt => opt.Ignore());
@@ -146,16 +136,9 @@ namespace ProjectGreenLens.Infrastructure.Mapping
                 .ForMember(dest => dest.isDelete, opt => opt.Ignore())
                 .ForMember(dest => dest.deletedAt, opt => opt.Ignore())
                 .ForMember(dest => dest.plantCategory, opt => opt.Ignore())
-                .ForMember(dest => dest.arModel, opt => opt.Ignore())
                 .ForMember(dest => dest.photos, opt => opt.Ignore())
                 .ForMember(dest => dest.guides, opt => opt.Ignore())
                 .ForMember(dest => dest.userPlants, opt => opt.Ignore());
-
-            // Navigation properties mapping
-            CreateMap<ArModel, ArModelResponseDto>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.id))
-                .ForMember(dest => dest.ModelUrl, opt => opt.MapFrom(src => src.modelUrl))
-                .ForMember(dest => dest.FileFormat, opt => opt.MapFrom(src => src.fileFormat));
 
             CreateMap<Photo, PhotoResponseDto>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.id))

@@ -10,5 +10,6 @@ namespace ProjectGreenLens.Repositories.Interfaces
             int? plantId = null,
             int page = 1,
             int pageSize = 30);
+        Task<List<AIAdvicesLogs>> GetLastMessagesByUserAsync(int userId);
     }
 }

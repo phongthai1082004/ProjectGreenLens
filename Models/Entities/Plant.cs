@@ -37,10 +37,10 @@ namespace ProjectGreenLens.Models.Entities
 
         public decimal? averagePrice { get; set; }      // Giá trung bình
 
-        public ArModel? arModel { get; set; }
         public List<Photo> photos { get; set; } = new();
         public List<Guide> guides { get; set; } = new();
         public List<UserPlant> userPlants { get; set; } = new();
+        public List<SavedPlant> savedPlants { get; set; } = new();
     }
     public enum WateringFrequency
     {

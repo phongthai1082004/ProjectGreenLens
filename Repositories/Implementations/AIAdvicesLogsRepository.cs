@@ -48,5 +48,28 @@ namespace ProjectGreenLens.Repositories.Implementations
 
             return (messages, totalCount);
         }
+
+
+        public async Task<List<AIAdvicesLogs>> GetLastMessagesByUserAsync(int userId)
+        {
+            var logs = await _context.AIAdvicesLogs
+                .Include(x => x.userPlant)
+                    .ThenInclude(up => up.plant)
+                .Where(x => x.userId == userId && !x.isDelete)
+                .ToListAsync();
+
+            var lastLogsPerPlant = logs
+                .GroupBy(x => x.userPlantId)
+                .Select(g => g.OrderByDescending(x => x.createdAt).First())
+                .ToList();
+
+            foreach (var log in lastLogsPerPlant)
+            {
+                if (!string.IsNullOrEmpty(log.content) && log.content.Length > 100)
+                    log.content = log.content.Substring(0, 100);
+            }
+
+            return lastLogsPerPlant;
+        }
     }
 }

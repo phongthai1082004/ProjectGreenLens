@@ -18,6 +18,5 @@ namespace ProjectGreenLens.Models.Entities
         public Permission? permission { get; set; }
 
         // Quan hệ 1-n với PermissionQuota
-        public ICollection<PermissionQuota> permissionQuotas { get; set; } = new List<PermissionQuota>();
     }
 }

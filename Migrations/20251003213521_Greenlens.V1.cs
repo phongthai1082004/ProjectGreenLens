@@ -3,16 +3,35 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
-
 namespace ProjectGreenLens.Migrations
 {
     /// <inheritdoc />
-    public partial class GreenLensV1 : Migration
+    public partial class GreenlensV1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Diseases",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    symptoms = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    treatment = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    prevention = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    uniqueGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
+                    createdAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
+                    updatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
+                    isDelete = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    deletedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Diseases", x => x.id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Permissions",
                 columns: table => new
@@ -49,27 +68,6 @@ namespace ProjectGreenLens.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_PlantCategories", x => x.id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "PlantDiseases",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    symptoms = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
-                    treatment = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
-                    prevention = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
-                    uniqueGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
-                    createdAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
-                    updatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
-                    isDelete = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
-                    deletedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PlantDiseases", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -157,6 +155,7 @@ namespace ProjectGreenLens.Migrations
                     email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     passwordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     roleId = table.Column<int>(type: "int", nullable: false),
+                    isEmailVerified = table.Column<bool>(type: "bit", nullable: false),
                     uniqueGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
                     createdAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
                     updatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
@@ -170,32 +169,6 @@ namespace ProjectGreenLens.Migrations
                         name: "FK_Users_Roles_roleId",
                         column: x => x.roleId,
                         principalTable: "Roles",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ArModels",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    plantId = table.Column<int>(type: "int", nullable: false),
-                    modelUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    fileFormat = table.Column<string>(type: "varchar(10)", maxLength: 10, nullable: true),
-                    uniqueGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
-                    createdAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
-                    updatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
-                    isDelete = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
-                    deletedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ArModels", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_ArModels_Plants_plantId",
-                        column: x => x.plantId,
-                        principalTable: "Plants",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -253,14 +226,16 @@ namespace ProjectGreenLens.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "LogEntries",
+                name: "ContactMessages",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    userId = table.Column<int>(type: "int", nullable: false),
-                    action = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    metadata = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    userId = table.Column<int>(type: "int", nullable: true),
+                    email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    subject = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    content = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: false),
+                    isResolved = table.Column<bool>(type: "bit", nullable: false),
                     uniqueGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
                     createdAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
                     updatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
@@ -269,26 +244,24 @@ namespace ProjectGreenLens.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_LogEntries", x => x.id);
+                    table.PrimaryKey("PK_ContactMessages", x => x.id);
                     table.ForeignKey(
-                        name: "FK_LogEntries_Users_userId",
+                        name: "FK_ContactMessages_Users_userId",
                         column: x => x.userId,
                         principalTable: "Users",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "id");
                 });
 
             migrationBuilder.CreateTable(
-                name: "NurseryProfiles",
+                name: "Notifications",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     userId = table.Column<int>(type: "int", nullable: false),
-                    nurseryName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    address = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
-                    contactNumber = table.Column<string>(type: "nvarchar(20)", nullable: true),
-                    description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    type = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    content = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    isRead = table.Column<bool>(type: "bit", nullable: false),
                     uniqueGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
                     createdAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
                     updatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
@@ -297,9 +270,9 @@ namespace ProjectGreenLens.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_NurseryProfiles", x => x.id);
+                    table.PrimaryKey("PK_Notifications", x => x.id);
                     table.ForeignKey(
-                        name: "FK_NurseryProfiles_Users_userId",
+                        name: "FK_Notifications_Users_userId",
                         column: x => x.userId,
                         principalTable: "Users",
                         principalColumn: "id",
@@ -314,11 +287,11 @@ namespace ProjectGreenLens.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     userId = table.Column<int>(type: "int", nullable: false),
                     amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    currency = table.Column<string>(type: "varchar(10)", maxLength: 10, nullable: false),
-                    paymentMethod = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    currency = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
                     status = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    transactionId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    paymentMethod = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    transactionId = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    orderId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     processedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     uniqueGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
                     createdAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
@@ -338,15 +311,16 @@ namespace ProjectGreenLens.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserMessages",
+                name: "Posts",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    senderId = table.Column<int>(type: "int", nullable: false),
-                    receiverId = table.Column<int>(type: "int", nullable: false),
-                    messageText = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: false),
-                    isRead = table.Column<bool>(type: "bit", nullable: false),
+                    authorId = table.Column<int>(type: "int", nullable: false),
+                    title = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    content = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    isPublished = table.Column<bool>(type: "bit", nullable: false),
+                    isHidden = table.Column<bool>(type: "bit", nullable: false),
                     uniqueGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
                     createdAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
                     updatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
@@ -355,19 +329,78 @@ namespace ProjectGreenLens.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserMessages", x => x.id);
+                    table.PrimaryKey("PK_Posts", x => x.id);
                     table.ForeignKey(
-                        name: "FK_UserMessages_Users_receiverId",
-                        column: x => x.receiverId,
+                        name: "FK_Posts_Users_authorId",
+                        column: x => x.authorId,
                         principalTable: "Users",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SavedPlants",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    userId = table.Column<int>(type: "int", nullable: false),
+                    plantId = table.Column<int>(type: "int", nullable: false),
+                    affiliateUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    uniqueGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
+                    createdAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
+                    updatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
+                    isDelete = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    deletedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SavedPlants", x => x.id);
                     table.ForeignKey(
-                        name: "FK_UserMessages_Users_senderId",
-                        column: x => x.senderId,
+                        name: "FK_SavedPlants_Plants_plantId",
+                        column: x => x.plantId,
+                        principalTable: "Plants",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_SavedPlants_Users_userId",
+                        column: x => x.userId,
                         principalTable: "Users",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserPermissionUsages",
+                columns: table => new
+                {
+                    userId = table.Column<int>(type: "int", nullable: false),
+                    permissionId = table.Column<int>(type: "int", nullable: false),
+                    usedCount = table.Column<int>(type: "int", nullable: false),
+                    lastUsedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    uniqueGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
+                    createdAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
+                    updatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
+                    isDelete = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    deletedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserPermissionUsages", x => new { x.userId, x.permissionId });
+                    table.ForeignKey(
+                        name: "FK_UserPermissionUsages_Permissions_permissionId",
+                        column: x => x.permissionId,
+                        principalTable: "Permissions",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserPermissionUsages_Users_userId",
+                        column: x => x.userId,
+                        principalTable: "Users",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -381,7 +414,7 @@ namespace ProjectGreenLens.Migrations
                     nickname = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     acquiredDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     notes = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: true),
-                    healthStatus = table.Column<int>(type: "int", maxLength: 50, nullable: false),
+                    healthStatus = table.Column<int>(type: "int", nullable: false),
                     currentLocation = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     isActive = table.Column<bool>(type: "bit", nullable: false),
                     uniqueGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
@@ -444,7 +477,7 @@ namespace ProjectGreenLens.Migrations
                     token = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     expiresAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     isRevoked = table.Column<bool>(type: "bit", nullable: false),
-                    type = table.Column<string>(type: "nvarchar(50)", nullable: false),
+                    type = table.Column<int>(type: "int", nullable: false),
                     userId = table.Column<int>(type: "int", nullable: false),
                     uniqueGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
                     createdAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
@@ -464,6 +497,39 @@ namespace ProjectGreenLens.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Comments",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    postId = table.Column<int>(type: "int", nullable: false),
+                    userId = table.Column<int>(type: "int", nullable: false),
+                    content = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    isDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    uniqueGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
+                    createdAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
+                    updatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
+                    isDelete = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    deletedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Comments", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_Comments_Posts_postId",
+                        column: x => x.postId,
+                        principalTable: "Posts",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Comments_Users_userId",
+                        column: x => x.userId,
+                        principalTable: "Users",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AIAdvicesLogs",
                 columns: table => new
                 {
@@ -471,8 +537,8 @@ namespace ProjectGreenLens.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     userId = table.Column<int>(type: "int", nullable: false),
                     userPlantId = table.Column<int>(type: "int", nullable: true),
-                    role = table.Column<string>(type: "varchar(20)", maxLength: 20, nullable: false),
-                    content = table.Column<string>(type: "varchar(2000)", maxLength: 2000, nullable: false),
+                    role = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    content = table.Column<string>(type: "nvarchar(4000)", maxLength: 4000, nullable: false),
                     uniqueGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
                     createdAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
                     updatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
@@ -557,46 +623,76 @@ namespace ProjectGreenLens.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.InsertData(
-                table: "Permissions",
-                columns: new[] { "id", "createdAt", "deletedAt", "description", "name", "uniqueGuid", "updatedAt" },
-                values: new object[,]
+            migrationBuilder.CreateTable(
+                name: "UserPlantDiseases",
+                columns: table => new
                 {
-                    { 1, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Permission to create plants", "createPlant", new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc) },
-                    { 2, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Permission to edit plants", "editPlant", new Guid("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"), new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc) },
-                    { 3, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Permission to delete plants", "deletePlant", new Guid("cccccccc-cccc-cccc-cccc-cccccccccccc"), new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc) },
-                    { 4, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Permission to view orders/payments", "viewOrders", new Guid("dddddddd-dddd-dddd-dddd-dddddddddddd"), new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc) },
-                    { 5, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Permission to manage users", "manageUsers", new Guid("eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee"), new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc) },
-                    { 6, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Permission to send messages", "sendMessages", new Guid("ffffffff-ffff-ffff-ffff-ffffffffffff"), new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc) }
+                    userPlantId = table.Column<int>(type: "int", nullable: false),
+                    diseaseId = table.Column<int>(type: "int", nullable: false),
+                    detectedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    status = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    notes = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: true),
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    uniqueGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
+                    createdAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
+                    updatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
+                    isDelete = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    deletedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserPlantDiseases", x => new { x.userPlantId, x.diseaseId });
+                    table.ForeignKey(
+                        name: "FK_UserPlantDiseases_Diseases_diseaseId",
+                        column: x => x.diseaseId,
+                        principalTable: "Diseases",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserPlantDiseases_UserPlants_userPlantId",
+                        column: x => x.userPlantId,
+                        principalTable: "UserPlants",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.InsertData(
-                table: "Roles",
-                columns: new[] { "id", "createdAt", "deletedAt", "description", "name", "uniqueGuid", "updatedAt" },
-                values: new object[,]
+            migrationBuilder.CreateTable(
+                name: "Likes",
+                columns: table => new
                 {
-                    { 1, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Administrator with full permissions", "admin", new Guid("11111111-1111-1111-1111-111111111111"), new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc) },
-                    { 2, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Regular user with limited permissions", "user", new Guid("22222222-2222-2222-2222-222222222222"), new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc) },
-                    { 3, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, "Nursery staff with specific permissions", "nursery", new Guid("33333333-3333-3333-3333-333333333333"), new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc) }
-                });
-
-            migrationBuilder.InsertData(
-                table: "RolePermissions",
-                columns: new[] { "permissionId", "roleId" },
-                values: new object[,]
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    userId = table.Column<int>(type: "int", nullable: false),
+                    postId = table.Column<int>(type: "int", nullable: true),
+                    commentId = table.Column<int>(type: "int", nullable: true),
+                    uniqueGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
+                    createdAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
+                    updatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
+                    isDelete = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    deletedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
                 {
-                    { 1, 1 },
-                    { 2, 1 },
-                    { 3, 1 },
-                    { 4, 1 },
-                    { 5, 1 },
-                    { 6, 1 },
-                    { 1, 2 },
-                    { 4, 2 },
-                    { 6, 2 },
-                    { 1, 3 },
-                    { 2, 3 },
-                    { 4, 3 }
+                    table.PrimaryKey("PK_Likes", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_Likes_Comments_commentId",
+                        column: x => x.commentId,
+                        principalTable: "Comments",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Likes_Posts_postId",
+                        column: x => x.postId,
+                        principalTable: "Posts",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Likes_Users_userId",
+                        column: x => x.userId,
+                        principalTable: "Users",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -613,17 +709,6 @@ namespace ProjectGreenLens.Migrations
                 name: "IX_AIAdvicesLogs_userPlantId",
                 table: "AIAdvicesLogs",
                 column: "userPlantId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ArModels_CreatedAt",
-                table: "ArModels",
-                column: "createdAt");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ArModels_plantId",
-                table: "ArModels",
-                column: "plantId",
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_CareHistories_CreatedAt",
@@ -651,6 +736,36 @@ namespace ProjectGreenLens.Migrations
                 column: "userPlantId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Comments_CreatedAt",
+                table: "Comments",
+                column: "createdAt");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Comments_postId",
+                table: "Comments",
+                column: "postId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Comments_userId",
+                table: "Comments",
+                column: "userId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ContactMessages_CreatedAt",
+                table: "ContactMessages",
+                column: "createdAt");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ContactMessages_userId",
+                table: "ContactMessages",
+                column: "userId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Diseases_CreatedAt",
+                table: "Diseases",
+                column: "createdAt");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Guides_CreatedAt",
                 table: "Guides",
                 column: "createdAt");
@@ -661,25 +776,34 @@ namespace ProjectGreenLens.Migrations
                 column: "plantId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_LogEntries_CreatedAt",
-                table: "LogEntries",
+                name: "IX_Likes_commentId",
+                table: "Likes",
+                column: "commentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Likes_CreatedAt",
+                table: "Likes",
                 column: "createdAt");
 
             migrationBuilder.CreateIndex(
-                name: "IX_LogEntry_UserCreated",
-                table: "LogEntries",
-                columns: new[] { "userId", "createdAt" });
+                name: "IX_Likes_postId",
+                table: "Likes",
+                column: "postId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_NurseryProfiles_CreatedAt",
-                table: "NurseryProfiles",
+                name: "IX_Likes_userId",
+                table: "Likes",
+                column: "userId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Notifications_CreatedAt",
+                table: "Notifications",
                 column: "createdAt");
 
             migrationBuilder.CreateIndex(
-                name: "IX_NurseryProfiles_userId",
-                table: "NurseryProfiles",
-                column: "userId",
-                unique: true);
+                name: "IX_Notifications_userId",
+                table: "Notifications",
+                column: "userId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Payment_UserStatusCreated",
@@ -712,18 +836,23 @@ namespace ProjectGreenLens.Migrations
                 column: "createdAt");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PlantDiseases_CreatedAt",
-                table: "PlantDiseases",
+                name: "IX_Plants_CreatedAt",
+                table: "Plants",
                 column: "createdAt");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Plant_CategoryId",
+                name: "IX_Plants_plantCategoryId",
                 table: "Plants",
                 column: "plantCategoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Plants_CreatedAt",
-                table: "Plants",
+                name: "IX_Posts_authorId",
+                table: "Posts",
+                column: "authorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Posts_CreatedAt",
+                table: "Posts",
                 column: "createdAt");
 
             migrationBuilder.CreateIndex(
@@ -737,29 +866,49 @@ namespace ProjectGreenLens.Migrations
                 column: "createdAt");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserMessage_ReceiverReadCreated",
-                table: "UserMessages",
-                columns: new[] { "receiverId", "isRead", "createdAt" });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserMessages_CreatedAt",
-                table: "UserMessages",
+                name: "IX_SavedPlants_CreatedAt",
+                table: "SavedPlants",
                 column: "createdAt");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserMessages_senderId",
-                table: "UserMessages",
-                column: "senderId");
+                name: "IX_SavedPlants_plantId",
+                table: "SavedPlants",
+                column: "plantId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SavedPlants_userId",
+                table: "SavedPlants",
+                column: "userId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserPermissionUsages_CreatedAt",
+                table: "UserPermissionUsages",
+                column: "createdAt");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserPermissionUsages_permissionId",
+                table: "UserPermissionUsages",
+                column: "permissionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserPlantDiseases_CreatedAt",
+                table: "UserPlantDiseases",
+                column: "createdAt");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserPlantDiseases_diseaseId",
+                table: "UserPlantDiseases",
+                column: "diseaseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserPlant_PlantId",
+                table: "UserPlants",
+                column: "plantId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserPlants_CreatedAt",
                 table: "UserPlants",
                 column: "createdAt");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserPlants_plantId",
-                table: "UserPlants",
-                column: "plantId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserPlants_userId",
@@ -805,22 +954,22 @@ namespace ProjectGreenLens.Migrations
                 name: "AIAdvicesLogs");
 
             migrationBuilder.DropTable(
-                name: "ArModels");
-
-            migrationBuilder.DropTable(
                 name: "CareHistories");
 
             migrationBuilder.DropTable(
                 name: "CareSchedules");
 
             migrationBuilder.DropTable(
+                name: "ContactMessages");
+
+            migrationBuilder.DropTable(
                 name: "Guides");
 
             migrationBuilder.DropTable(
-                name: "LogEntries");
+                name: "Likes");
 
             migrationBuilder.DropTable(
-                name: "NurseryProfiles");
+                name: "Notifications");
 
             migrationBuilder.DropTable(
                 name: "Payments");
@@ -829,13 +978,16 @@ namespace ProjectGreenLens.Migrations
                 name: "Photos");
 
             migrationBuilder.DropTable(
-                name: "PlantDiseases");
-
-            migrationBuilder.DropTable(
                 name: "RolePermissions");
 
             migrationBuilder.DropTable(
-                name: "UserMessages");
+                name: "SavedPlants");
+
+            migrationBuilder.DropTable(
+                name: "UserPermissionUsages");
+
+            migrationBuilder.DropTable(
+                name: "UserPlantDiseases");
 
             migrationBuilder.DropTable(
                 name: "UserProfiles");
@@ -844,10 +996,19 @@ namespace ProjectGreenLens.Migrations
                 name: "UserTokens");
 
             migrationBuilder.DropTable(
-                name: "UserPlants");
+                name: "Comments");
 
             migrationBuilder.DropTable(
                 name: "Permissions");
+
+            migrationBuilder.DropTable(
+                name: "Diseases");
+
+            migrationBuilder.DropTable(
+                name: "UserPlants");
+
+            migrationBuilder.DropTable(
+                name: "Posts");
 
             migrationBuilder.DropTable(
                 name: "Plants");

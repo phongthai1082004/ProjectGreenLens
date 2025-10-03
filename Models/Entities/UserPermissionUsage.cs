@@ -5,16 +5,18 @@ namespace ProjectGreenLens.Models.Entities
 {
     public class UserPermissionUsage : BaseEntity
     {
-        [ForeignKey(nameof(User))]
+        [Required]
         public int userId { get; set; }
-        public User? user { get; set; }
-
-        [ForeignKey(nameof(Permission))]
-        public int permissionId { get; set; }
-        public Permission? permission { get; set; }
+        [ForeignKey(nameof(userId))]
+        public User user { get; set; } = null!;
 
         [Required]
-        public int usedCount { get; set; }   // Đã dùng bao nhiêu lần
+        public int permissionId { get; set; }
+        [ForeignKey(nameof(permissionId))]
+        public Permission permission { get; set; } = null!;
+
+        [Required]
+        public int usedCount { get; set; }   // Số lần đã dùng quyền này
 
         [Required]
         public DateTime lastUsedAt { get; set; } = DateTime.UtcNow;

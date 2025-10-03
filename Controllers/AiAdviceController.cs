@@ -99,6 +99,20 @@
                 var result = await _aiAdviceService.GetUserConversationPagedAsync(userId, request);
                 return Ok(ApiResponse<ConversationResponseDto>.Ok(result, "Lấy lịch sử hội thoại phân trang thành công"));
             }
+
+            [HttpGet("last-messages/{userId}")]
+            public async Task<IActionResult> GetLastMessagesByUser(int userId)
+            {
+                if (userId <= 0)
+                    return BadRequest("UserId không hợp lệ.");
+
+                var result = await _aiAdviceService.GetLastMessagesByUserAsync(userId);
+
+                if (result == null || !result.Any())
+                    return NotFound("Không tìm thấy log cho user này.");
+
+                return Ok(ApiResponse<IEnumerable<LastMessageDto>>.Ok(result, "Lấy lịch sử hội thoại phân trang thành công"));
+            }
         }
     }
 }

@@ -33,7 +33,7 @@ namespace ProjectGreenLens.Migrations
                     b.Property<string>("content")
                         .IsRequired()
                         .HasMaxLength(4000)
-                        .HasColumnType("varchar(4000)");
+                        .HasColumnType("nvarchar(4000)");
 
                     b.Property<DateTime>("createdAt")
                         .ValueGeneratedOnAdd()
@@ -51,7 +51,7 @@ namespace ProjectGreenLens.Migrations
                     b.Property<string>("role")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("varchar(20)");
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<Guid>("uniqueGuid")
                         .ValueGeneratedOnAdd()
@@ -79,59 +79,6 @@ namespace ProjectGreenLens.Migrations
                     b.HasIndex("userPlantId");
 
                     b.ToTable("AIAdvicesLogs");
-                });
-
-            modelBuilder.Entity("ProjectGreenLens.Models.Entities.ArModel", b =>
-                {
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
-
-                    b.Property<DateTime>("createdAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.Property<DateTime?>("deletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("fileFormat")
-                        .HasMaxLength(10)
-                        .HasColumnType("varchar(10)");
-
-                    b.Property<bool>("isDelete")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
-                    b.Property<string>("modelUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("plantId")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("uniqueGuid")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValueSql("NEWID()");
-
-                    b.Property<DateTime>("updatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.HasKey("id");
-
-                    b.HasIndex("createdAt")
-                        .HasDatabaseName("IX_ArModels_CreatedAt");
-
-                    b.HasIndex("plantId")
-                        .IsUnique();
-
-                    b.ToTable("ArModels");
                 });
 
             modelBuilder.Entity("ProjectGreenLens.Models.Entities.CareHistory", b =>
@@ -271,6 +218,180 @@ namespace ProjectGreenLens.Migrations
                     b.ToTable("CareSchedules");
                 });
 
+            modelBuilder.Entity("ProjectGreenLens.Models.Entities.Comment", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
+
+                    b.Property<string>("content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("createdAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<DateTime?>("deletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("isDelete")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("isDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("postId")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("uniqueGuid")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
+
+                    b.Property<DateTime>("updatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<int>("userId")
+                        .HasColumnType("int");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("createdAt")
+                        .HasDatabaseName("IX_Comments_CreatedAt");
+
+                    b.HasIndex("postId");
+
+                    b.HasIndex("userId");
+
+                    b.ToTable("Comments");
+                });
+
+            modelBuilder.Entity("ProjectGreenLens.Models.Entities.ContactMessage", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
+
+                    b.Property<string>("content")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<DateTime>("createdAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<DateTime?>("deletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("email")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("isDelete")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("isResolved")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("subject")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<Guid>("uniqueGuid")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
+
+                    b.Property<DateTime>("updatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<int?>("userId")
+                        .HasColumnType("int");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("createdAt")
+                        .HasDatabaseName("IX_ContactMessages_CreatedAt");
+
+                    b.HasIndex("userId");
+
+                    b.ToTable("ContactMessages");
+                });
+
+            modelBuilder.Entity("ProjectGreenLens.Models.Entities.Disease", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
+
+                    b.Property<DateTime>("createdAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<DateTime?>("deletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("isDelete")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("prevention")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("symptoms")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("treatment")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<Guid>("uniqueGuid")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
+
+                    b.Property<DateTime>("updatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("createdAt")
+                        .HasDatabaseName("IX_Diseases_CreatedAt");
+
+                    b.ToTable("Diseases");
+                });
+
             modelBuilder.Entity("ProjectGreenLens.Models.Entities.Guide", b =>
                 {
                     b.Property<int>("id")
@@ -281,7 +402,7 @@ namespace ProjectGreenLens.Migrations
 
                     b.Property<string>("content")
                         .HasMaxLength(5000)
-                        .HasColumnType("nvarchar(4000)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("createdAt")
                         .ValueGeneratedOnAdd()
@@ -324,7 +445,7 @@ namespace ProjectGreenLens.Migrations
                     b.ToTable("Guides");
                 });
 
-            modelBuilder.Entity("ProjectGreenLens.Models.Entities.LogEntry", b =>
+            modelBuilder.Entity("ProjectGreenLens.Models.Entities.Like", b =>
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
@@ -332,10 +453,8 @@ namespace ProjectGreenLens.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
-                    b.Property<string>("action")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                    b.Property<int?>("commentId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("createdAt")
                         .ValueGeneratedOnAdd()
@@ -350,7 +469,66 @@ namespace ProjectGreenLens.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
-                    b.Property<string>("metadata")
+                    b.Property<int?>("postId")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("uniqueGuid")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
+
+                    b.Property<DateTime>("updatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<int>("userId")
+                        .HasColumnType("int");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("commentId");
+
+                    b.HasIndex("createdAt")
+                        .HasDatabaseName("IX_Likes_CreatedAt");
+
+                    b.HasIndex("postId");
+
+                    b.HasIndex("userId");
+
+                    b.ToTable("Likes");
+                });
+
+            modelBuilder.Entity("ProjectGreenLens.Models.Entities.Notification", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
+
+                    b.Property<string>("content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("createdAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<DateTime?>("deletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("isDelete")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("isRead")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("type")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("uniqueGuid")
@@ -369,73 +547,11 @@ namespace ProjectGreenLens.Migrations
                     b.HasKey("id");
 
                     b.HasIndex("createdAt")
-                        .HasDatabaseName("IX_LogEntries_CreatedAt");
+                        .HasDatabaseName("IX_Notifications_CreatedAt");
 
-                    b.HasIndex("userId", "createdAt")
-                        .HasDatabaseName("IX_LogEntry_UserCreated");
+                    b.HasIndex("userId");
 
-                    b.ToTable("LogEntries");
-                });
-
-            modelBuilder.Entity("ProjectGreenLens.Models.Entities.NurseryProfile", b =>
-                {
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
-
-                    b.Property<string>("address")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<string>("contactNumber")
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<DateTime>("createdAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.Property<DateTime?>("deletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("description")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<bool>("isDelete")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
-                    b.Property<string>("nurseryName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<Guid>("uniqueGuid")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValueSql("NEWID()");
-
-                    b.Property<DateTime>("updatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.Property<int>("userId")
-                        .HasColumnType("int");
-
-                    b.HasKey("id");
-
-                    b.HasIndex("createdAt")
-                        .HasDatabaseName("IX_NurseryProfiles_CreatedAt");
-
-                    b.HasIndex("userId")
-                        .IsUnique();
-
-                    b.ToTable("NurseryProfiles");
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("ProjectGreenLens.Models.Entities.Payment", b =>
@@ -445,9 +561,6 @@ namespace ProjectGreenLens.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
-
-                    b.Property<int?>("Userid")
-                        .HasColumnType("int");
 
                     b.Property<decimal>("amount")
                         .HasColumnType("decimal(18,2)");
@@ -464,10 +577,6 @@ namespace ProjectGreenLens.Migrations
 
                     b.Property<DateTime?>("deletedAt")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("description")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
 
                     b.Property<bool>("isDelete")
                         .ValueGeneratedOnAdd()
@@ -486,15 +595,9 @@ namespace ProjectGreenLens.Migrations
                     b.Property<DateTime?>("processedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("productRefId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("purchaseToken")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
                     b.Property<string>("status")
                         .IsRequired()
+                        .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("transactionId")
@@ -516,17 +619,13 @@ namespace ProjectGreenLens.Migrations
 
                     b.HasKey("id");
 
-                    b.HasIndex("Userid");
-
                     b.HasIndex("createdAt")
                         .HasDatabaseName("IX_Payments_CreatedAt");
-
-                    b.HasIndex("productRefId");
 
                     b.HasIndex("userId", "status", "createdAt")
                         .HasDatabaseName("IX_Payment_UserStatusCreated");
 
-                    b.ToTable("Payments", (string)null);
+                    b.ToTable("Payments");
                 });
 
             modelBuilder.Entity("ProjectGreenLens.Models.Entities.Permission", b =>
@@ -576,126 +675,6 @@ namespace ProjectGreenLens.Migrations
                         .HasDatabaseName("IX_Permissions_CreatedAt");
 
                     b.ToTable("Permissions");
-
-                    b.HasData(
-                        new
-                        {
-                            id = 1,
-                            createdAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            description = "Permission to create plants",
-                            isDelete = false,
-                            name = "createPlant",
-                            uniqueGuid = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
-                            updatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
-                        },
-                        new
-                        {
-                            id = 2,
-                            createdAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            description = "Permission to edit plants",
-                            isDelete = false,
-                            name = "editPlant",
-                            uniqueGuid = new Guid("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
-                            updatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
-                        },
-                        new
-                        {
-                            id = 3,
-                            createdAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            description = "Permission to delete plants",
-                            isDelete = false,
-                            name = "deletePlant",
-                            uniqueGuid = new Guid("cccccccc-cccc-cccc-cccc-cccccccccccc"),
-                            updatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
-                        },
-                        new
-                        {
-                            id = 4,
-                            createdAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            description = "Permission to view orders/payments",
-                            isDelete = false,
-                            name = "viewOrders",
-                            uniqueGuid = new Guid("dddddddd-dddd-dddd-dddd-dddddddddddd"),
-                            updatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
-                        },
-                        new
-                        {
-                            id = 5,
-                            createdAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            description = "Permission to manage users",
-                            isDelete = false,
-                            name = "manageUsers",
-                            uniqueGuid = new Guid("eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee"),
-                            updatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
-                        },
-                        new
-                        {
-                            id = 6,
-                            createdAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            description = "Permission to send messages",
-                            isDelete = false,
-                            name = "sendMessages",
-                            uniqueGuid = new Guid("ffffffff-ffff-ffff-ffff-ffffffffffff"),
-                            updatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
-                        });
-                });
-
-            modelBuilder.Entity("ProjectGreenLens.Models.Entities.PermissionQuota", b =>
-                {
-                    b.Property<int>("roleId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("permissionId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("RolePermissionpermissionId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("RolePermissionroleId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("createdAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.Property<DateTime?>("deletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
-
-                    b.Property<bool>("isDelete")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
-                    b.Property<Guid>("uniqueGuid")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValueSql("NEWID()");
-
-                    b.Property<DateTime>("updatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.Property<int>("usageLimit")
-                        .HasColumnType("int");
-
-                    b.HasKey("roleId", "permissionId");
-
-                    b.HasIndex("createdAt")
-                        .HasDatabaseName("IX_PermissionQuotas_CreatedAt");
-
-                    b.HasIndex("permissionId");
-
-                    b.HasIndex("RolePermissionroleId", "RolePermissionpermissionId");
-
-                    b.ToTable("PermissionQuotas");
                 });
 
             modelBuilder.Entity("ProjectGreenLens.Models.Entities.Photo", b =>
@@ -824,8 +803,7 @@ namespace ProjectGreenLens.Migrations
                     b.HasIndex("createdAt")
                         .HasDatabaseName("IX_Plants_CreatedAt");
 
-                    b.HasIndex("plantCategoryId")
-                        .HasDatabaseName("IX_Plant_CategoryId");
+                    b.HasIndex("plantCategoryId");
 
                     b.ToTable("Plants");
                 });
@@ -878,13 +856,20 @@ namespace ProjectGreenLens.Migrations
                     b.ToTable("PlantCategories");
                 });
 
-            modelBuilder.Entity("ProjectGreenLens.Models.Entities.PlantDisease", b =>
+            modelBuilder.Entity("ProjectGreenLens.Models.Entities.Post", b =>
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
+
+                    b.Property<int>("authorId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("createdAt")
                         .ValueGeneratedOnAdd()
@@ -899,22 +884,16 @@ namespace ProjectGreenLens.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
-                    b.Property<string>("name")
+                    b.Property<bool>("isHidden")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("isPublished")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("title")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("prevention")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<string>("symptoms")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<string>("treatment")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<Guid>("uniqueGuid")
                         .ValueGeneratedOnAdd()
@@ -928,77 +907,12 @@ namespace ProjectGreenLens.Migrations
 
                     b.HasKey("id");
 
-                    b.HasIndex("createdAt")
-                        .HasDatabaseName("IX_PlantDiseases_CreatedAt");
-
-                    b.ToTable("PlantDiseases");
-                });
-
-            modelBuilder.Entity("ProjectGreenLens.Models.Entities.Product", b =>
-                {
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
-
-                    b.Property<string>("Currency")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("ProductId")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<DateTime>("createdAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.Property<DateTime?>("deletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("isDelete")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
-                    b.Property<Guid>("uniqueGuid")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValueSql("NEWID()");
-
-                    b.Property<DateTime>("updatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.HasKey("id");
+                    b.HasIndex("authorId");
 
                     b.HasIndex("createdAt")
-                        .HasDatabaseName("IX_Product_CreatedAt");
+                        .HasDatabaseName("IX_Posts_CreatedAt");
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("Posts");
                 });
 
             modelBuilder.Entity("ProjectGreenLens.Models.Entities.Role", b =>
@@ -1048,68 +962,6 @@ namespace ProjectGreenLens.Migrations
                         .HasDatabaseName("IX_Roles_CreatedAt");
 
                     b.ToTable("Roles");
-
-                    b.HasData(
-                        new
-                        {
-                            id = 1,
-                            createdAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            description = "Administrator with full permissions",
-                            isDelete = false,
-                            name = "Quản Trị Viên",
-                            uniqueGuid = new Guid("11111111-1111-1111-1111-111111111111"),
-                            updatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
-                        },
-                        new
-                        {
-                            id = 2,
-                            createdAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            description = "Regular user with limited permissions",
-                            isDelete = false,
-                            name = "Người Dùng",
-                            uniqueGuid = new Guid("22222222-2222-2222-2222-222222222222"),
-                            updatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
-                        },
-                        new
-                        {
-                            id = 3,
-                            createdAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            description = "Nursery staff with specific permissions",
-                            isDelete = false,
-                            name = "Vườn Ươm",
-                            uniqueGuid = new Guid("33333333-3333-3333-3333-333333333333"),
-                            updatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
-                        },
-                        new
-                        {
-                            id = 4,
-                            createdAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            description = "Entry-level user with basic feature access",
-                            isDelete = false,
-                            name = "Người Dùng Bạc",
-                            uniqueGuid = new Guid("44444444-4444-4444-4444-444444444444"),
-                            updatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
-                        },
-                        new
-                        {
-                            id = 5,
-                            createdAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            description = "Intermediate user with extended feature access",
-                            isDelete = false,
-                            name = "Người Dùng Vàng",
-                            uniqueGuid = new Guid("55555555-5555-5555-5555-555555555555"),
-                            updatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
-                        },
-                        new
-                        {
-                            id = 6,
-                            createdAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            description = "Advanced user with premium feature access",
-                            isDelete = false,
-                            name = "Người Dùng Kim Cương",
-                            uniqueGuid = new Guid("00000000-0000-0000-0000-000000000000"),
-                            updatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
-                        });
                 });
 
             modelBuilder.Entity("ProjectGreenLens.Models.Entities.RolePermission", b =>
@@ -1127,68 +979,58 @@ namespace ProjectGreenLens.Migrations
                     b.HasIndex("permissionId");
 
                     b.ToTable("RolePermissions");
+                });
 
-                    b.HasData(
-                        new
-                        {
-                            roleId = 1,
-                            permissionId = 1
-                        },
-                        new
-                        {
-                            roleId = 1,
-                            permissionId = 2
-                        },
-                        new
-                        {
-                            roleId = 1,
-                            permissionId = 3
-                        },
-                        new
-                        {
-                            roleId = 1,
-                            permissionId = 4
-                        },
-                        new
-                        {
-                            roleId = 1,
-                            permissionId = 5
-                        },
-                        new
-                        {
-                            roleId = 1,
-                            permissionId = 6
-                        },
-                        new
-                        {
-                            roleId = 2,
-                            permissionId = 1
-                        },
-                        new
-                        {
-                            roleId = 2,
-                            permissionId = 4
-                        },
-                        new
-                        {
-                            roleId = 2,
-                            permissionId = 6
-                        },
-                        new
-                        {
-                            roleId = 3,
-                            permissionId = 1
-                        },
-                        new
-                        {
-                            roleId = 3,
-                            permissionId = 2
-                        },
-                        new
-                        {
-                            roleId = 3,
-                            permissionId = 4
-                        });
+            modelBuilder.Entity("ProjectGreenLens.Models.Entities.SavedPlant", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
+
+                    b.Property<string>("affiliateUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("createdAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<DateTime?>("deletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("isDelete")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<int>("plantId")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("uniqueGuid")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
+
+                    b.Property<DateTime>("updatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<int>("userId")
+                        .HasColumnType("int");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("createdAt")
+                        .HasDatabaseName("IX_SavedPlants_CreatedAt");
+
+                    b.HasIndex("plantId");
+
+                    b.HasIndex("userId");
+
+                    b.ToTable("SavedPlants");
                 });
 
             modelBuilder.Entity("ProjectGreenLens.Models.Entities.User", b =>
@@ -1251,64 +1093,6 @@ namespace ProjectGreenLens.Migrations
                     b.HasIndex("roleId");
 
                     b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("ProjectGreenLens.Models.Entities.UserMessage", b =>
-                {
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
-
-                    b.Property<DateTime>("createdAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.Property<DateTime?>("deletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("isDelete")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
-                    b.Property<bool>("isRead")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("messageText")
-                        .IsRequired()
-                        .HasMaxLength(2000)
-                        .HasColumnType("nvarchar(2000)");
-
-                    b.Property<int>("receiverId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("senderId")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("uniqueGuid")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValueSql("NEWID()");
-
-                    b.Property<DateTime>("updatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.HasKey("id");
-
-                    b.HasIndex("createdAt")
-                        .HasDatabaseName("IX_UserMessages_CreatedAt");
-
-                    b.HasIndex("senderId");
-
-                    b.HasIndex("receiverId", "isRead", "createdAt")
-                        .HasDatabaseName("IX_UserMessage_ReceiverReadCreated");
-
-                    b.ToTable("UserMessages");
                 });
 
             modelBuilder.Entity("ProjectGreenLens.Models.Entities.UserPermissionUsage", b =>
@@ -1427,11 +1211,71 @@ namespace ProjectGreenLens.Migrations
                     b.HasIndex("createdAt")
                         .HasDatabaseName("IX_UserPlants_CreatedAt");
 
-                    b.HasIndex("plantId");
+                    b.HasIndex("plantId")
+                        .HasDatabaseName("IX_UserPlant_PlantId");
 
                     b.HasIndex("userId");
 
                     b.ToTable("UserPlants");
+                });
+
+            modelBuilder.Entity("ProjectGreenLens.Models.Entities.UserPlantDisease", b =>
+                {
+                    b.Property<int>("userPlantId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("diseaseId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("createdAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<DateTime?>("deletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("detectedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
+
+                    b.Property<bool>("isDelete")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("notes")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<string>("status")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<Guid>("uniqueGuid")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
+
+                    b.Property<DateTime>("updatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.HasKey("userPlantId", "diseaseId");
+
+                    b.HasIndex("createdAt")
+                        .HasDatabaseName("IX_UserPlantDiseases_CreatedAt");
+
+                    b.HasIndex("diseaseId");
+
+                    b.ToTable("UserPlantDiseases");
                 });
 
             modelBuilder.Entity("ProjectGreenLens.Models.Entities.UserProfile", b =>
@@ -1525,9 +1369,8 @@ namespace ProjectGreenLens.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("type")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(50)");
+                    b.Property<int>("type")
+                        .HasColumnType("int");
 
                     b.Property<Guid>("uniqueGuid")
                         .ValueGeneratedOnAdd()
@@ -1570,17 +1413,6 @@ namespace ProjectGreenLens.Migrations
                     b.Navigation("userPlant");
                 });
 
-            modelBuilder.Entity("ProjectGreenLens.Models.Entities.ArModel", b =>
-                {
-                    b.HasOne("ProjectGreenLens.Models.Entities.Plant", "plant")
-                        .WithOne("arModel")
-                        .HasForeignKey("ProjectGreenLens.Models.Entities.ArModel", "plantId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("plant");
-                });
-
             modelBuilder.Entity("ProjectGreenLens.Models.Entities.CareHistory", b =>
                 {
                     b.HasOne("ProjectGreenLens.Models.Entities.UserPlant", "userPlant")
@@ -1603,6 +1435,34 @@ namespace ProjectGreenLens.Migrations
                     b.Navigation("userPlant");
                 });
 
+            modelBuilder.Entity("ProjectGreenLens.Models.Entities.Comment", b =>
+                {
+                    b.HasOne("ProjectGreenLens.Models.Entities.Post", "post")
+                        .WithMany("comments")
+                        .HasForeignKey("postId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ProjectGreenLens.Models.Entities.User", "user")
+                        .WithMany("comments")
+                        .HasForeignKey("userId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("post");
+
+                    b.Navigation("user");
+                });
+
+            modelBuilder.Entity("ProjectGreenLens.Models.Entities.ContactMessage", b =>
+                {
+                    b.HasOne("ProjectGreenLens.Models.Entities.User", "user")
+                        .WithMany("contactMessages")
+                        .HasForeignKey("userId");
+
+                    b.Navigation("user");
+                });
+
             modelBuilder.Entity("ProjectGreenLens.Models.Entities.Guide", b =>
                 {
                     b.HasOne("ProjectGreenLens.Models.Entities.Plant", "plant")
@@ -1614,22 +1474,36 @@ namespace ProjectGreenLens.Migrations
                     b.Navigation("plant");
                 });
 
-            modelBuilder.Entity("ProjectGreenLens.Models.Entities.LogEntry", b =>
+            modelBuilder.Entity("ProjectGreenLens.Models.Entities.Like", b =>
                 {
+                    b.HasOne("ProjectGreenLens.Models.Entities.Comment", "comment")
+                        .WithMany("likes")
+                        .HasForeignKey("commentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("ProjectGreenLens.Models.Entities.Post", "post")
+                        .WithMany("likes")
+                        .HasForeignKey("postId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("ProjectGreenLens.Models.Entities.User", "user")
-                        .WithMany("logEntries")
+                        .WithMany("likes")
                         .HasForeignKey("userId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("comment");
+
+                    b.Navigation("post");
+
                     b.Navigation("user");
                 });
 
-            modelBuilder.Entity("ProjectGreenLens.Models.Entities.NurseryProfile", b =>
+            modelBuilder.Entity("ProjectGreenLens.Models.Entities.Notification", b =>
                 {
                     b.HasOne("ProjectGreenLens.Models.Entities.User", "user")
-                        .WithOne("nurseryProfile")
-                        .HasForeignKey("ProjectGreenLens.Models.Entities.NurseryProfile", "userId")
+                        .WithMany("notifications")
+                        .HasForeignKey("userId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1638,47 +1512,13 @@ namespace ProjectGreenLens.Migrations
 
             modelBuilder.Entity("ProjectGreenLens.Models.Entities.Payment", b =>
                 {
-                    b.HasOne("ProjectGreenLens.Models.Entities.User", null)
-                        .WithMany("payments")
-                        .HasForeignKey("Userid");
-
-                    b.HasOne("ProjectGreenLens.Models.Entities.Product", "product")
-                        .WithMany()
-                        .HasForeignKey("productRefId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("ProjectGreenLens.Models.Entities.User", "user")
-                        .WithMany()
+                        .WithMany("payments")
                         .HasForeignKey("userId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("product");
-
                     b.Navigation("user");
-                });
-
-            modelBuilder.Entity("ProjectGreenLens.Models.Entities.PermissionQuota", b =>
-                {
-                    b.HasOne("ProjectGreenLens.Models.Entities.Permission", "permission")
-                        .WithMany()
-                        .HasForeignKey("permissionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ProjectGreenLens.Models.Entities.Role", "role")
-                        .WithMany()
-                        .HasForeignKey("roleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ProjectGreenLens.Models.Entities.RolePermission", null)
-                        .WithMany("permissionQuotas")
-                        .HasForeignKey("RolePermissionroleId", "RolePermissionpermissionId");
-
-                    b.Navigation("permission");
-
-                    b.Navigation("role");
                 });
 
             modelBuilder.Entity("ProjectGreenLens.Models.Entities.Photo", b =>
@@ -1701,6 +1541,17 @@ namespace ProjectGreenLens.Migrations
                     b.Navigation("plantCategory");
                 });
 
+            modelBuilder.Entity("ProjectGreenLens.Models.Entities.Post", b =>
+                {
+                    b.HasOne("ProjectGreenLens.Models.Entities.User", "author")
+                        .WithMany("posts")
+                        .HasForeignKey("authorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("author");
+                });
+
             modelBuilder.Entity("ProjectGreenLens.Models.Entities.RolePermission", b =>
                 {
                     b.HasOne("ProjectGreenLens.Models.Entities.Permission", "permission")
@@ -1720,6 +1571,25 @@ namespace ProjectGreenLens.Migrations
                     b.Navigation("role");
                 });
 
+            modelBuilder.Entity("ProjectGreenLens.Models.Entities.SavedPlant", b =>
+                {
+                    b.HasOne("ProjectGreenLens.Models.Entities.Plant", "plant")
+                        .WithMany("savedPlants")
+                        .HasForeignKey("plantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ProjectGreenLens.Models.Entities.User", "user")
+                        .WithMany("savedPlants")
+                        .HasForeignKey("userId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("plant");
+
+                    b.Navigation("user");
+                });
+
             modelBuilder.Entity("ProjectGreenLens.Models.Entities.User", b =>
                 {
                     b.HasOne("ProjectGreenLens.Models.Entities.Role", "role")
@@ -1729,25 +1599,6 @@ namespace ProjectGreenLens.Migrations
                         .IsRequired();
 
                     b.Navigation("role");
-                });
-
-            modelBuilder.Entity("ProjectGreenLens.Models.Entities.UserMessage", b =>
-                {
-                    b.HasOne("ProjectGreenLens.Models.Entities.User", "receiver")
-                        .WithMany("receivedMessages")
-                        .HasForeignKey("receiverId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("ProjectGreenLens.Models.Entities.User", "sender")
-                        .WithMany("sentMessages")
-                        .HasForeignKey("senderId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("receiver");
-
-                    b.Navigation("sender");
                 });
 
             modelBuilder.Entity("ProjectGreenLens.Models.Entities.UserPermissionUsage", b =>
@@ -1788,6 +1639,25 @@ namespace ProjectGreenLens.Migrations
                     b.Navigation("user");
                 });
 
+            modelBuilder.Entity("ProjectGreenLens.Models.Entities.UserPlantDisease", b =>
+                {
+                    b.HasOne("ProjectGreenLens.Models.Entities.Disease", "disease")
+                        .WithMany("userPlantDiseases")
+                        .HasForeignKey("diseaseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ProjectGreenLens.Models.Entities.UserPlant", "userPlant")
+                        .WithMany("userPlantDiseases")
+                        .HasForeignKey("userPlantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("disease");
+
+                    b.Navigation("userPlant");
+                });
+
             modelBuilder.Entity("ProjectGreenLens.Models.Entities.UserProfile", b =>
                 {
                     b.HasOne("ProjectGreenLens.Models.Entities.User", "user")
@@ -1810,6 +1680,16 @@ namespace ProjectGreenLens.Migrations
                     b.Navigation("user");
                 });
 
+            modelBuilder.Entity("ProjectGreenLens.Models.Entities.Comment", b =>
+                {
+                    b.Navigation("likes");
+                });
+
+            modelBuilder.Entity("ProjectGreenLens.Models.Entities.Disease", b =>
+                {
+                    b.Navigation("userPlantDiseases");
+                });
+
             modelBuilder.Entity("ProjectGreenLens.Models.Entities.Permission", b =>
                 {
                     b.Navigation("rolePermissions");
@@ -1819,11 +1699,11 @@ namespace ProjectGreenLens.Migrations
 
             modelBuilder.Entity("ProjectGreenLens.Models.Entities.Plant", b =>
                 {
-                    b.Navigation("arModel");
-
                     b.Navigation("guides");
 
                     b.Navigation("photos");
+
+                    b.Navigation("savedPlants");
 
                     b.Navigation("userPlants");
                 });
@@ -1833,6 +1713,13 @@ namespace ProjectGreenLens.Migrations
                     b.Navigation("plants");
                 });
 
+            modelBuilder.Entity("ProjectGreenLens.Models.Entities.Post", b =>
+                {
+                    b.Navigation("comments");
+
+                    b.Navigation("likes");
+                });
+
             modelBuilder.Entity("ProjectGreenLens.Models.Entities.Role", b =>
                 {
                     b.Navigation("rolePermissions");
@@ -1840,26 +1727,25 @@ namespace ProjectGreenLens.Migrations
                     b.Navigation("users");
                 });
 
-            modelBuilder.Entity("ProjectGreenLens.Models.Entities.RolePermission", b =>
-                {
-                    b.Navigation("permissionQuotas");
-                });
-
             modelBuilder.Entity("ProjectGreenLens.Models.Entities.User", b =>
                 {
                     b.Navigation("aiAdvicesLogs");
 
-                    b.Navigation("logEntries");
+                    b.Navigation("comments");
 
-                    b.Navigation("nurseryProfile");
+                    b.Navigation("contactMessages");
+
+                    b.Navigation("likes");
+
+                    b.Navigation("notifications");
 
                     b.Navigation("payments");
 
                     b.Navigation("permissionUsages");
 
-                    b.Navigation("receivedMessages");
+                    b.Navigation("posts");
 
-                    b.Navigation("sentMessages");
+                    b.Navigation("savedPlants");
 
                     b.Navigation("userPlants");
 
@@ -1875,6 +1761,8 @@ namespace ProjectGreenLens.Migrations
                     b.Navigation("careHistories");
 
                     b.Navigation("careSchedules");
+
+                    b.Navigation("userPlantDiseases");
                 });
 #pragma warning restore 612, 618
         }

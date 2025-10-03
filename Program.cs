@@ -26,7 +26,7 @@ builder.Services.AddControllers()
     {
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
         options.JsonSerializerOptions.WriteIndented = true;
-        options.JsonSerializerOptions.Encoder = System.Text.Encodings.Web.JavaScriptEncoder.Create(System.Text.Unicode.UnicodeRanges.All);
+        options.JsonSerializerOptions.Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
     });
 
 builder.Services.AddEndpointsApiExplorer();
@@ -44,7 +44,6 @@ builder.Services.AddScoped<IUserTokenRepository, UserTokenRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IPlantRepository, PlantRepository>();
 builder.Services.AddScoped<IGuideRepository, GuideRepository>();
-builder.Services.AddScoped<IArModelRepository, ArModelRepository>();
 builder.Services.AddScoped<IPlantPhotoRepository, PlantPhotoRepository>();
 builder.Services.AddScoped<IPlantCategoryRepository, PlantCategoryRepository>();
 builder.Services.AddScoped<IPlantService, PlantService>();

@@ -105,6 +105,56 @@ namespace ProjectGreenLens.Services.Implementations
                 totalPages = totalPages
             };
         }
+
+        public async Task<List<LastMessageDto>> GetLastMessagesByUserAsync(int userId)
+        {
+            var logs = await _aiAdvicesLogsRepository.GetLastMessagesByUserAsync(userId);
+
+            // 1. Nhóm theo cây (có userPlant)
+            var logsWithPlant = logs
+                .Where(l => l.userPlant != null)
+                .GroupBy(l => l.userPlantId)
+                .Select(g => g.OrderByDescending(l => l.createdAt).First())
+                .Select(log => new LastMessageDto
+                {
+                    id = log.id,
+                    userPlantId = log.userPlantId,
+                    plantName = log.userPlant?.plant?.scientificName,
+                    content = log.content != null && log.content.Length > 100
+                                ? log.content.Substring(0, 100)
+                                : log.content,
+                    createdAt = log.createdAt
+                });
+
+            // 2. Nhóm log không có cây → lấy bản mới nhất
+            var nullPlantLog = logs
+                .Where(l => l.userPlant == null)
+                .OrderByDescending(l => l.createdAt)
+                .FirstOrDefault();
+
+            LastMessageDto? nullPlantDto = null;
+            if (nullPlantLog != null)
+            {
+                nullPlantDto = new LastMessageDto
+                {
+                    id = nullPlantLog.id,
+                    userPlantId = null,
+                    plantName = null,
+                    content = nullPlantLog.content != null && nullPlantLog.content.Length > 100
+                                ? nullPlantLog.content.Substring(0, 100)
+                                : nullPlantLog.content,
+                    createdAt = nullPlantLog.createdAt
+                };
+            }
+
+            // Kết hợp
+            var result = logsWithPlant.ToList();
+            if (nullPlantDto != null)
+                result.Add(nullPlantDto);
+
+            return result;
+        }
+
     }
 }
 

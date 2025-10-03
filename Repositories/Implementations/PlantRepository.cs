@@ -23,7 +23,6 @@ namespace ProjectGreenLens.Repositories.Implementations
             {
                 queryable = queryable
                     .Include(p => p.plantCategory)
-                .Include(p => p.arModel)
                 .Include(p => p.photos)
                 .Include(p => p.guides);
             }
@@ -73,7 +72,6 @@ namespace ProjectGreenLens.Repositories.Implementations
             return await _context.Set<Plant>()
                 .Where(p => p.id == id && !p.isDelete)
                 .Include(p => p.plantCategory)
-                .Include(p => p.arModel)
                 .Include(p => p.photos)
                 .Include(p => p.guides)
                 .FirstOrDefaultAsync();

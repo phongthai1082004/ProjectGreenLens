@@ -11,40 +11,25 @@ namespace ProjectGreenLens.Models.Entities
         [ForeignKey(nameof(userId))]
         public User user { get; set; } = null!;
 
-        [Required, Range(0.01, double.MaxValue)]
+        [Required]
+        [Range(0.01, double.MaxValue)]
         public decimal amount { get; set; }
 
         [Required, MaxLength(10)]
-        public string currency { get; set; } = null!;
+        public string currency { get; set; } = "VND";
+
+        [Required, MaxLength(20)]
+        public string status { get; set; } = "Pending"; // Pending, Success, Failed
 
         [Required, MaxLength(50)]
-        public string paymentMethod { get; set; } = null!;
-
-        [Required]
-        [Column(TypeName = "nvarchar(20)")]
-        public PaymentStatus status { get; set; }
+        public string paymentMethod { get; set; } = "VNPay";
 
         [MaxLength(255)]
         public string? transactionId { get; set; }
-        public string? description { get; set; }
 
         [MaxLength(100)]
         public string? orderId { get; set; }
 
-        [MaxLength(255)]
-        public string? purchaseToken { get; set; }
-
-        public int? productRefId { get; set; }
-        [ForeignKey(nameof(productRefId))]
-        public Product? product { get; set; }
-
         public DateTime? processedAt { get; set; }
-    }
-    public enum PaymentStatus
-    {
-        Pending,
-        Completed,
-        Failed,
-        Refunded
     }
 }
