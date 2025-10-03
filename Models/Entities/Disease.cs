@@ -2,7 +2,7 @@
 
 namespace ProjectGreenLens.Models.Entities
 {
-    public class PlantDisease : BaseEntity
+    public class Disease : BaseEntity
     {
         [Required, MaxLength(100)]
         public string name { get; set; } = null!;
@@ -15,5 +15,6 @@ namespace ProjectGreenLens.Models.Entities
 
         [MaxLength(1000)]
         public string? prevention { get; set; }
+        public List<UserPlantDisease> userPlantDiseases { get; set; } = new();
     }
 }

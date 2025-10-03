@@ -10,5 +10,6 @@ namespace ProjectGreenLens.Services.Interfaces
         Task<AIAdviceResponseDto> GetAdviceAsync(AIAdviceRequestDto request, int userId);
         Task<IEnumerable<AIAdviceResponseDto>> GetUserConversationAsync(int userId, int? userPlantId = null);
         Task<ConversationResponseDto> GetUserConversationPagedAsync(int userId, ConversationRequestDto request);
+        Task<List<LastMessageDto>> GetLastMessagesByUserAsync(int userId);
     }
 }

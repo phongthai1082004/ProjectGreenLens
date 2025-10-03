@@ -24,21 +24,16 @@ namespace ProjectGreenLens.Models.Entities
 
         // Navigation properties
         public UserProfile? userProfile { get; set; }
-        public List<LogEntry> logEntries { get; set; } = new();
         public List<Payment> payments { get; set; } = new();
-        public NurseryProfile? nurseryProfile { get; set; }
         public List<UserPlant> userPlants { get; set; } = new();
-
-        // InverseProperty cho tin nhắn
-        [InverseProperty(nameof(UserMessage.sender))]
-        public List<UserMessage> sentMessages { get; set; } = new();
-
-        [InverseProperty(nameof(UserMessage.receiver))]
-        public List<UserMessage> receivedMessages { get; set; } = new();
-
         public List<UserToken> userTokens { get; set; } = new();
         public List<AIAdvicesLogs> aiAdvicesLogs { get; set; } = new();
-        public ICollection<UserPermissionUsage> permissionUsages { get; set; } = new List<UserPermissionUsage>();
-
+        public List<UserPermissionUsage> permissionUsages { get; set; } = new();
+        public List<Post> posts { get; set; } = new();
+        public List<Comment> comments { get; set; } = new();
+        public List<Like> likes { get; set; } = new();
+        public List<Notification> notifications { get; set; } = new();
+        public List<ContactMessage> contactMessages { get; set; } = new();
+        public List<SavedPlant> savedPlants { get; set; } = new();
     }
 }

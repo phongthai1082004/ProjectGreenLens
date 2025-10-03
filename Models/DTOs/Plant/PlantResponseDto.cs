@@ -1,5 +1,4 @@
-﻿using ProjectGreenLens.Models.DTOs.ArModel;
-using ProjectGreenLens.Models.DTOs.Guide;
+﻿using ProjectGreenLens.Models.DTOs.Guide;
 using ProjectGreenLens.Models.DTOs.PlantPhoto;
 
 namespace ProjectGreenLens.Models.DTOs.Plant
@@ -23,7 +22,6 @@ namespace ProjectGreenLens.Models.DTOs.Plant
         public DateTime UpdatedAt { get; set; }
 
         // Navigation properties
-        public ArModelResponseDto? ArModel { get; set; }
         public List<PhotoResponseDto> Photos { get; set; } = new();
         public List<GuideResponseDto> Guides { get; set; } = new();
     }
