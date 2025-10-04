@@ -62,9 +62,6 @@ namespace ProjectGreenLens.Services.Implementations
             if (query.WateringFrequency.HasValue && query.WateringFrequency < 1)
                 throw new ValidationException("Tần suất tưới nước phải lớn hơn 0");
 
-            if (query.LightRequirement.HasValue && query.LightRequirement < 1)
-                throw new ValidationException("Yêu cầu ánh sáng phải lớn hơn 0");
-
             if (query.PlantCategoryId.HasValue && query.PlantCategoryId < 1)
                 throw new ValidationException("ID danh mục cây phải lớn hơn 0");
 
@@ -119,8 +116,6 @@ namespace ProjectGreenLens.Services.Implementations
             if (dto.WateringFrequency > 30)
                 throw new ValidationException("Tần suất tưới nước không được quá 30 ngày");
 
-            if (dto.LightRequirement > 10)
-                throw new ValidationException("Yêu cầu ánh sáng không được quá mức 10");
 
             if (dto.AveragePrice.HasValue && dto.AveragePrice > 10000000) // 10 million
                 throw new ValidationException("Giá trung bình không được quá 10,000,000");
@@ -145,9 +140,6 @@ namespace ProjectGreenLens.Services.Implementations
             // Additional business rules (same as create)
             if (dto.WateringFrequency > 30)
                 throw new ValidationException("Tần suất tưới nước không được quá 30 ngày");
-
-            if (dto.LightRequirement > 10)
-                throw new ValidationException("Yêu cầu ánh sáng không được quá mức 10");
 
             if (dto.AveragePrice.HasValue && dto.AveragePrice > 10000000) // 10 million
                 throw new ValidationException("Giá trung bình không được quá 10,000,000");

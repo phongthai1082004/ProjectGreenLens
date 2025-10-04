@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using ProjectGreenLens.Models.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace ProjectGreenLens.Models.DTOs.Plant
 {
@@ -17,7 +18,7 @@ namespace ProjectGreenLens.Models.DTOs.Plant
         public int? PlantCategoryId { get; set; }
         public bool? IsIndoor { get; set; }
         public int? WateringFrequency { get; set; }
-        public int? LightRequirement { get; set; }
+        public LightRequirement LightRequirement { get; set; }
         public string? SoilType { get; set; }
         public decimal? MinPrice { get; set; }
         public decimal? MaxPrice { get; set; }

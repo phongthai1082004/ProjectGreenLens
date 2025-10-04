@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjectGreenLens.Infrastructure.dbContext;
 
@@ -11,9 +12,11 @@ using ProjectGreenLens.Infrastructure.dbContext;
 namespace ProjectGreenLens.Migrations
 {
     [DbContext(typeof(GreenLensDbContext))]
-    partial class GreenLensDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251004092512_Greenlens.V2.1")]
+    partial class GreenlensV21
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,9 +37,6 @@ namespace ProjectGreenLens.Migrations
                         .IsRequired()
                         .HasMaxLength(4000)
                         .HasColumnType("nvarchar(4000)");
-
-                    b.Property<string>("conversationType")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("createdAt")
                         .ValueGeneratedOnAdd()

@@ -1,7 +1,7 @@
 ﻿using ProjectGreenLens.Exceptions;
 using System.ComponentModel.DataAnnotations;
 
-namespace ProjectGreenLens.Models.DTOs.ArModel
+namespace ProjectGreenLens.Models.DTOs.AIAdvice
 {
     public class AIAdviceRequestDto
     {
@@ -10,5 +10,6 @@ namespace ProjectGreenLens.Models.DTOs.ArModel
         public string content { get; set; } = null!;
 
         public int? userPlantId { get; set; }
+        public int? plantId { get; set; }
     }
 }

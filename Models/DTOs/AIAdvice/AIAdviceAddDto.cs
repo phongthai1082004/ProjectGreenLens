@@ -9,7 +9,8 @@ namespace ProjectGreenLens.Models.DTOs.AIAdvice
         [MaxLength(4000, ErrorMessage = GeminiErrorMessages.CONTENT_TOO_LONG)]
         public string content { get; set; } = null!;
 
-        public int? userPlantId { get; set; }
+        public int? userPlantId { get; set; }         // cây user sở hữu
+        public int? plantId { get; set; }             // cây trong cửa hàng
 
         [Required]
         public int userId { get; set; }

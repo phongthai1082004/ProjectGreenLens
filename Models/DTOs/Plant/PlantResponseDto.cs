@@ -1,5 +1,6 @@
 ﻿using ProjectGreenLens.Models.DTOs.Guide;
 using ProjectGreenLens.Models.DTOs.PlantPhoto;
+using ProjectGreenLens.Models.Entities;
 
 namespace ProjectGreenLens.Models.DTOs.Plant
 {
@@ -15,7 +16,7 @@ namespace ProjectGreenLens.Models.DTOs.Plant
         public string? PlantCategoryName { get; set; }
         public bool IsIndoor { get; set; }
         public int WateringFrequency { get; set; }
-        public int LightRequirement { get; set; }
+        public LightRequirement LightRequirement { get; set; }
         public string? SoilType { get; set; }
         public decimal? AveragePrice { get; set; }
         public DateTime CreatedAt { get; set; }
