@@ -48,6 +48,7 @@ namespace ProjectGreenLens.Infrastructure.Middleware.ErrorHandlingMiddleware
             return ex switch
             {
                 ProjectGreenLens.Exceptions.NotFoundException => (StatusCodes.Status404NotFound, ex.Message, LogLevel.Warning),
+                KeyNotFoundException => (StatusCodes.Status404NotFound, ex.Message, LogLevel.Warning), // <-- Thêm dòng này
                 UnauthorizedAccessException => (StatusCodes.Status401Unauthorized, ex.Message, LogLevel.Warning),
                 InvalidOperationException => (StatusCodes.Status400BadRequest, ex.Message, LogLevel.Warning),
                 System.ComponentModel.DataAnnotations.ValidationException => (StatusCodes.Status400BadRequest, ex.Message, LogLevel.Warning),

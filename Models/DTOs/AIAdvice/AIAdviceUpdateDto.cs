@@ -13,6 +13,7 @@ namespace ProjectGreenLens.Models.DTOs.AIAdvice
         public string content { get; set; } = null!;
 
         public int? userPlantId { get; set; }
+        public int? plantId { get; set; }
 
         [Required]
         [MaxLength(20)]

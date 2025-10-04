@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProjectGreenLens.Models.Entities;
+using ProjectGreenLens.Models.Non_userEntities;
+using ProjectGreenLens.Models.Non_userEntities.ProjectGreenLens.Models.Entities;
 
 namespace ProjectGreenLens.Infrastructure.dbContext
 {
@@ -35,7 +37,8 @@ namespace ProjectGreenLens.Infrastructure.dbContext
         public DbSet<Notification> Notifications { get; set; } = null!;
         public DbSet<ContactMessage> ContactMessages { get; set; } = null!;
         public DbSet<SavedPlant> SavedPlants { get; set; } = null!;
-
+        public DbSet<GuestQuota> GuestQuotas { get; set; } = null!;
+        public DbSet<GuestAIAdvicesLog> GuestAIAdvicesLogs { get; set; } = null!;
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // BaseEntity config
@@ -217,6 +220,19 @@ namespace ProjectGreenLens.Infrastructure.dbContext
                 .WithMany(p => p.savedPlants)
                 .HasForeignKey(sp => sp.plantId);
 
+            modelBuilder.Entity<GuestQuota>()
+           .HasKey(gq => gq.GuestToken);
+
+            // Cấu hình cho GuestAIAdvicesLog
+            modelBuilder.Entity<GuestAIAdvicesLog>()
+                .HasKey(gal => gal.id);
+
+            modelBuilder.Entity<AIAdvicesLogs>()
+                .HasOne(x => x.plant)
+                .WithMany(x => x.aIAdvicesLogs)
+                .HasForeignKey(x => x.plantId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             // Indexes
             ConfigureIndexes(modelBuilder);
         }
@@ -254,6 +270,9 @@ namespace ProjectGreenLens.Infrastructure.dbContext
             modelBuilder.Entity<CareHistory>()
                 .HasIndex(e => e.careDate)
                 .HasDatabaseName("IX_CareHistory_CareDate");
+            modelBuilder.Entity<GuestAIAdvicesLog>()
+             .HasIndex(gal => gal.GuestToken)
+             .HasDatabaseName("IX_GuestAIAdvicesLog_GuestToken");
         }
 
         public override int SaveChanges()

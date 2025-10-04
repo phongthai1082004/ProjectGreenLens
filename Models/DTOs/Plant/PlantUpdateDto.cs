@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using ProjectGreenLens.Models.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace ProjectGreenLens.Models.DTOs.Plant
 {
@@ -29,8 +30,8 @@ namespace ProjectGreenLens.Models.DTOs.Plant
         public int WateringFrequency { get; set; }
 
         [Required(ErrorMessage = ProjectGreenLens.Exceptions.PlantValidationMessages.RequiredLightRequirement)]
-        [Range(1, int.MaxValue, ErrorMessage = ProjectGreenLens.Exceptions.PlantValidationMessages.InvalidLightRequirement)]
-        public int LightRequirement { get; set; }
+        [EnumDataType(typeof(ProjectGreenLens.Models.Entities.LightRequirement), ErrorMessage = ProjectGreenLens.Exceptions.PlantValidationMessages.InvalidLightRequirement)]
+        public LightRequirement LightRequirement { get; set; }
 
         [MaxLength(100, ErrorMessage = ProjectGreenLens.Exceptions.PlantValidationMessages.SoilTypeMaxLength)]
         public string? SoilType { get; set; }

@@ -95,10 +95,6 @@ namespace ProjectGreenLens.Repositories.Implementations
                 queryable = queryable.Where(p => p.wateringFrequency == query.WateringFrequency.Value);
             }
 
-            if (query.LightRequirement.HasValue)
-            {
-                queryable = queryable.Where(p => p.lightRequirement == query.LightRequirement.Value);
-            }
 
             if (!string.IsNullOrWhiteSpace(query.SoilType))
             {
@@ -128,7 +124,6 @@ namespace ProjectGreenLens.Repositories.Implementations
                 PlantSortBy.CreatedAt => p => p.createdAt,
                 PlantSortBy.AveragePrice => p => p.averagePrice ?? 0,
                 PlantSortBy.WateringFrequency => p => p.wateringFrequency,
-                PlantSortBy.LightRequirement => p => p.lightRequirement,
                 PlantSortBy.CategoryName => p => p.plantCategory != null ? p.plantCategory.name : "",
                 _ => p => p.createdAt
             };

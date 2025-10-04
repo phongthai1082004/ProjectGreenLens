@@ -29,8 +29,7 @@ namespace ProjectGreenLens.Models.Entities
         [MaxLength(100)]
         public int wateringFrequency { get; set; }
 
-        [MaxLength(100)]
-        public int lightRequirement { get; set; }
+        public LightRequirement LightRequirement { get; set; }
 
         [MaxLength(100)]
         public string? soilType { get; set; }           // Loại đất phù hợp
@@ -41,12 +40,7 @@ namespace ProjectGreenLens.Models.Entities
         public List<Guide> guides { get; set; } = new();
         public List<UserPlant> userPlants { get; set; } = new();
         public List<SavedPlant> savedPlants { get; set; } = new();
-    }
-    public enum WateringFrequency
-    {
-        Daily = 1,
-        TwoTimesAWeek = 2,
-        ThreeTimesAweek = 3
+        public List<AIAdvicesLogs> aIAdvicesLogs { get; set; } = new();
     }
 
     public enum LightRequirement

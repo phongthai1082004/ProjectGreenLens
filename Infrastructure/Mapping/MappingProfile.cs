@@ -1,11 +1,12 @@
 ﻿using AutoMapper;
 using ProjectGreenLens.Models.DTOs.AIAdvice;
-using ProjectGreenLens.Models.DTOs.ArModel;
 using ProjectGreenLens.Models.DTOs.Auth;
+using ProjectGreenLens.Models.DTOs.GuestAIAdvice;
 using ProjectGreenLens.Models.DTOs.Guide;
 using ProjectGreenLens.Models.DTOs.Plant;
 using ProjectGreenLens.Models.DTOs.PlantPhoto;
 using ProjectGreenLens.Models.Entities;
+using ProjectGreenLens.Models.Non_userEntities;
 
 namespace ProjectGreenLens.Infrastructure.Mapping
 {
@@ -86,7 +87,6 @@ namespace ProjectGreenLens.Infrastructure.Mapping
                 .ForMember(dest => dest.PlantCategoryName, opt => opt.MapFrom(src => src.plantCategory != null ? src.plantCategory.name : null))
                 .ForMember(dest => dest.IsIndoor, opt => opt.MapFrom(src => src.isIndoor))
                 .ForMember(dest => dest.WateringFrequency, opt => opt.MapFrom(src => src.wateringFrequency))
-                .ForMember(dest => dest.LightRequirement, opt => opt.MapFrom(src => src.lightRequirement))
                 .ForMember(dest => dest.SoilType, opt => opt.MapFrom(src => src.soilType))
                 .ForMember(dest => dest.AveragePrice, opt => opt.MapFrom(src => src.averagePrice))
                 .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.createdAt))
@@ -103,7 +103,6 @@ namespace ProjectGreenLens.Infrastructure.Mapping
                 .ForMember(dest => dest.plantCategoryId, opt => opt.MapFrom(src => src.PlantCategoryId))
                 .ForMember(dest => dest.isIndoor, opt => opt.MapFrom(src => src.IsIndoor))
                 .ForMember(dest => dest.wateringFrequency, opt => opt.MapFrom(src => src.WateringFrequency))
-                .ForMember(dest => dest.lightRequirement, opt => opt.MapFrom(src => src.LightRequirement))
                 .ForMember(dest => dest.soilType, opt => opt.MapFrom(src => src.SoilType))
                 .ForMember(dest => dest.averagePrice, opt => opt.MapFrom(src => src.AveragePrice))
                 .ForMember(dest => dest.id, opt => opt.Ignore())
@@ -127,7 +126,6 @@ namespace ProjectGreenLens.Infrastructure.Mapping
                 .ForMember(dest => dest.plantCategoryId, opt => opt.MapFrom(src => src.PlantCategoryId))
                 .ForMember(dest => dest.isIndoor, opt => opt.MapFrom(src => src.IsIndoor))
                 .ForMember(dest => dest.wateringFrequency, opt => opt.MapFrom(src => src.WateringFrequency))
-                .ForMember(dest => dest.lightRequirement, opt => opt.MapFrom(src => src.LightRequirement))
                 .ForMember(dest => dest.soilType, opt => opt.MapFrom(src => src.SoilType))
                 .ForMember(dest => dest.averagePrice, opt => opt.MapFrom(src => src.AveragePrice))
                 .ForMember(dest => dest.uniqueGuid, opt => opt.Ignore())
@@ -190,12 +188,25 @@ namespace ProjectGreenLens.Infrastructure.Mapping
                 .ForMember(dest => dest.user, opt => opt.Ignore())
                 .ForMember(dest => dest.userPlant, opt => opt.Ignore());
 
-            // AIAdviceRequestDto -> AIAdviceAddDto (giữ nguyên như cũ)
-            CreateMap<AIAdviceRequestDto, AIAdviceAddDto>()
-                .ForMember(dest => dest.content, opt => opt.MapFrom(src => src.content))
+            CreateMap<AIAdvicesLogs, AIAdviceResponseDto>()
                 .ForMember(dest => dest.userPlantId, opt => opt.MapFrom(src => src.userPlantId))
-                .ForMember(dest => dest.role, opt => opt.MapFrom(src => "user"))
-                .ForMember(dest => dest.userId, opt => opt.Ignore());
+                .ForMember(dest => dest.plantId, opt => opt.MapFrom(src => src.plantId))
+                .ForMember(dest => dest.role, opt => opt.MapFrom(src => src.role))
+                .ForMember(dest => dest.content, opt => opt.MapFrom(src => src.content))
+                .ForMember(dest => dest.id, opt => opt.MapFrom(src => src.id))
+                .ForMember(dest => dest.createdAt, opt => opt.MapFrom(src => src.createdAt))
+                .ForMember(dest => dest.isDelete, opt => opt.MapFrom(src => src.isDelete))
+                .ForMember(dest => dest.userId, opt => opt.MapFrom(src => src.userId));
+
+            CreateMap<AIAdviceAddDto, AIAdvicesLogs>();
+            CreateMap<AIAdviceUpdateDto, AIAdvicesLogs>();
+            CreateMap<AIAdvicesLogs, LastMessageDto>()
+                .ForMember(dest => dest.id, opt => opt.MapFrom(src => src.id))
+                .ForMember(dest => dest.userPlantId, opt => opt.MapFrom(src => src.userPlantId))
+                .ForMember(dest => dest.plantId, opt => opt.MapFrom(src => src.plantId))
+                .ForMember(dest => dest.plantName, opt => opt.MapFrom(src => src.userPlant != null ? src.userPlant.plant.scientificName : src.plant != null ? src.plant.scientificName : null))
+                .ForMember(dest => dest.content, opt => opt.MapFrom(src => src.content))
+                .ForMember(dest => dest.createdAt, opt => opt.MapFrom(src => src.createdAt));
 
 
             // Entity -> DTO
@@ -203,6 +214,24 @@ namespace ProjectGreenLens.Infrastructure.Mapping
 
             // DTO -> Entity (nếu cần)
             CreateMap<AIAdviceResponseDto, AIAdvicesLogs>();
+
+            // GuestAIAdvicesLog <-> GuestAIAdviceResponseDto
+            CreateMap<GuestAIAdvicesLog, GuestAIAdviceResponseDto>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.id))
+                .ForMember(dest => dest.GuestToken, opt => opt.MapFrom(src => src.GuestToken))
+                .ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.Role))
+                .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.Content))
+                .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.createdAt))
+                .ForMember(dest => dest.UserPlantId, opt => opt.MapFrom(src => src.UserPlantId));
+
+            // GuestAIAdviceRequestDto -> GuestAIAdvicesLog (lưu câu hỏi của guest)
+            CreateMap<GuestAIAdviceRequestDto, GuestAIAdvicesLog>()
+                .ForMember(dest => dest.GuestToken, opt => opt.MapFrom(src => src.GuestToken))
+                .ForMember(dest => dest.Role, opt => opt.MapFrom(src => "user"))
+                .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.Content))
+                .ForMember(dest => dest.createdAt, opt => opt.Ignore()) // Set manually in service
+                .ForMember(dest => dest.UserPlantId, opt => opt.MapFrom(src => src.UserPlantId))
+                .ForMember(dest => dest.id, opt => opt.Ignore()); // Auto-generated by BaseEntity
         }
     }
 }

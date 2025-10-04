@@ -15,11 +15,16 @@ namespace ProjectGreenLens.Models.Entities
 
         [ForeignKey(nameof(userPlantId))]
         public UserPlant? userPlant { get; set; }
+        public int? plantId { get; set; }
+        [ForeignKey(nameof(plantId))]
+        public Plant? plant { get; set; }
 
         [Required, MaxLength(20)]
         public string role { get; set; } = "user";
 
         [Required, MaxLength(4000)]
         public string content { get; set; } = null!;
+
+        public string? conversationType { get; set; } // owned, store, following, unknown
     }
 }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjectGreenLens.Infrastructure.dbContext;
 
@@ -11,9 +12,11 @@ using ProjectGreenLens.Infrastructure.dbContext;
 namespace ProjectGreenLens.Migrations
 {
     [DbContext(typeof(GreenLensDbContext))]
-    partial class GreenLensDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251004083224_Greenlens.V2")]
+    partial class GreenlensV2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,9 +38,6 @@ namespace ProjectGreenLens.Migrations
                         .HasMaxLength(4000)
                         .HasColumnType("nvarchar(4000)");
 
-                    b.Property<string>("conversationType")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("createdAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
@@ -50,9 +50,6 @@ namespace ProjectGreenLens.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
-
-                    b.Property<int?>("plantId")
-                        .HasColumnType("int");
 
                     b.Property<string>("role")
                         .IsRequired()
@@ -79,8 +76,6 @@ namespace ProjectGreenLens.Migrations
 
                     b.HasIndex("createdAt")
                         .HasDatabaseName("IX_AIAdvicesLogs_CreatedAt");
-
-                    b.HasIndex("plantId");
 
                     b.HasIndex("userId");
 
@@ -1509,11 +1504,6 @@ namespace ProjectGreenLens.Migrations
 
             modelBuilder.Entity("ProjectGreenLens.Models.Entities.AIAdvicesLogs", b =>
                 {
-                    b.HasOne("ProjectGreenLens.Models.Entities.Plant", "plant")
-                        .WithMany("aIAdvicesLogs")
-                        .HasForeignKey("plantId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("ProjectGreenLens.Models.Entities.User", "user")
                         .WithMany("aiAdvicesLogs")
                         .HasForeignKey("userId")
@@ -1524,8 +1514,6 @@ namespace ProjectGreenLens.Migrations
                         .WithMany("aiAdvicesLogs")
                         .HasForeignKey("userPlantId")
                         .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("plant");
 
                     b.Navigation("user");
 
@@ -1818,8 +1806,6 @@ namespace ProjectGreenLens.Migrations
 
             modelBuilder.Entity("ProjectGreenLens.Models.Entities.Plant", b =>
                 {
-                    b.Navigation("aIAdvicesLogs");
-
                     b.Navigation("guides");
 
                     b.Navigation("photos");

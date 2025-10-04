@@ -150,7 +150,6 @@ namespace ProjectGreenLens.Controllers
             var query = new PlantQueryDto
             {
                 WateringFrequency = wateringFrequency,
-                LightRequirement = lightRequirement,
                 IsIndoor = isIndoor,
                 PageNumber = pageNumber,
                 PageSize = pageSize,
@@ -273,7 +272,6 @@ namespace ProjectGreenLens.Controllers
             var query = new PlantQueryDto
             {
                 WateringFrequency = 7, // Weekly watering
-                LightRequirement = 2,  // Low to medium light
                 PageSize = pageSize,
                 PageNumber = 1,
                 SortBy = PlantSortBy.ScientificName,
@@ -470,9 +468,6 @@ namespace ProjectGreenLens.Controllers
 
             if (query.WateringFrequency.HasValue)
                 filters.Add($"tần suất tưới {query.WateringFrequency.Value} ngày");
-
-            if (query.LightRequirement.HasValue)
-                filters.Add($"yêu cầu ánh sáng mức {query.LightRequirement.Value}");
 
             if (!string.IsNullOrWhiteSpace(query.SoilType))
                 filters.Add($"loại đất '{query.SoilType}'");

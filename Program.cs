@@ -50,8 +50,9 @@ builder.Services.AddScoped<IPlantService, PlantService>();
 builder.Services.AddScoped<IAIAdviceService, AIAdviceService>();
 builder.Services.AddScoped<IAIAdvicesLogsRepository, AIAdvicesLogsRepository>();
 builder.Services.AddScoped<IUserPlantRepository, UserPlantRepository>();
-
-
+builder.Services.AddScoped<IGuestAIAdvicesLogRepository, GuestAIAdvicesLogRepository>();
+builder.Services.AddScoped<IGuestAIAdviceService, GuestAIAdviceService>();
+builder.Services.AddScoped<IGuestQuotaRepository, GuestQuotaRepository>();
 
 // API Gemini
 builder.Services.AddScoped<IGeminiService, GeminiService>();

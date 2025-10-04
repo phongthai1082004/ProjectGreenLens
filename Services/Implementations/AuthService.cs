@@ -496,6 +496,7 @@ namespace ProjectGreenLens.Services.Implementations
                 tokenEntity.isRevoked = true;
                 await _tokenRepository.UpdateAsync(tokenEntity);
 
+
                 _logger.LogInformation("Email verified successfully for user ID: {UserId}", user.id);
             }
             catch (Exception ex)
